@@ -15,3 +15,8 @@ RUN cd pixel-perfect-sfm && \
 RUN cd pixel-perfect-sfm &&  \
     python3 -m pip install -e .
 
+
+RUN python3 -m pip install kornia
+
+RUN chmod -R 777 pixel-perfect-sfm
+
