@@ -1,0 +1,17 @@
+FROM gkiavash/colmap:1.0.1
+
+
+RUN apt-get -y install libhdf5-dev python3.9 python3-pip
+
+
+RUN git clone https://github.com/cvg/pixel-perfect-sfm --recursive &&  \
+    cd pixel-perfect-sfm &&  \
+    git checkout main
+
+
+RUN cd pixel-perfect-sfm && \
+    python3 -m pip install -r requirements.txt
+
+RUN cd pixel-perfect-sfm &&  \
+    python3 -m pip install -e .
+
