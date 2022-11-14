@@ -30,6 +30,7 @@ def pairs_from_db(pairs_path: Path, database_path: Path):
 
 BASE_PATH = sys.argv[1]
 tag = sys.argv[2]
+config = sys.argv[3]
 
 dataset = Path(BASE_PATH)
 outputs = dataset / 'refined/'
@@ -49,11 +50,14 @@ sfm_dir_colmap = sfm_dir / "colmap"
 sfm_dir.mkdir(parents=True, exist_ok=True)
 sfm_dir_colmap.mkdir(parents=True, exist_ok=True)
 
-conf = OmegaConf.load(parse_config_path("low_memory"))
-print(type(conf), conf)
-conf['dense_features']['model'] = {"name": 'dsift'}
-# conf['dense_features']['device'] = "cpu"
-print(type(conf), conf)
+if config == "low":
+    conf = OmegaConf.load(parse_config_path("low_memory"))
+    print(type(conf), conf)
+    conf['dense_features']['model'] = {"name": 'dsift'}
+    # conf['dense_features']['device'] = "cpu"
+    print(type(conf), conf)
+else:
+    conf = OmegaConf.load(parse_config_path("default"))
 
 refiner = PixSfM(conf=conf)
 # refiner = PixSfM(config)
