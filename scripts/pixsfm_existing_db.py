@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from omegaconf import DictConfig, OmegaConf
 import torch
@@ -24,9 +25,15 @@ def pairs_from_db(pairs_path: Path, database_path: Path):
     db.close()
 
 
-dataset = Path('/home/gkiavash/Downloads/sfm_street_1')
-tag = 't2'
-outputs = Path('/home/gkiavash/Downloads/sfm_street_1_refine')
+# BASE_PATH = '/home/gkiavash/Downloads/sfm_street_1'
+# tag = 't1'
+
+BASE_PATH = sys.argv[1]
+tag = sys.argv[2]
+
+dataset = Path(BASE_PATH)
+outputs = dataset / 'refined/'
+outputs.mkdir(parents=True, exist_ok=True)
 
 # Setup the paths
 images = dataset / 'images/'
