@@ -1,0 +1,15 @@
+BootStrap: localimage
+From: ../sif_files/pixsfm_raw.sif
+
+%post
+   apt-get install wget nano
+   python3 -m pip install kornia
+
+%environment
+    DATASET_PATH=/root/projects/sfm_cereal_box_1_singularity
+
+%runscript
+    python3 Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py $DATASET_PATH t1 default_config
+
+%labels
+   Author kiavash.ghamsari
