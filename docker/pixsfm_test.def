@@ -1,5 +1,5 @@
-BootStrap: localimage
-From: ../sif_files/pixsfm_raw.sif
+BootStrap: docker
+From: gkiavash/pixsfm:1.0.3
 
 %post
    apt-get install wget nano
