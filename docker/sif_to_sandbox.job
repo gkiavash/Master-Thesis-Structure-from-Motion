@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name pixsfm
+
+#SBATCH -o output_%j.txt
+#SBATCH -e errors_%j.txt
+#SBATCH --mail-user gkiavash@gmail.com
+#SBATCH --mail-type ALL
+
+#SBATCH --time 12:00:00
+#SBATCH --ntasks 1
+#SBATCH --partition allgroups
+
+#SBATCH --mem 16G
+#SBATCH --cpus-per-task 12
+
+cd $WORKING_DIR
+#your working directory
+
+srun singularity build --sandbox Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all_sandbox.sif/ Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all.sif
