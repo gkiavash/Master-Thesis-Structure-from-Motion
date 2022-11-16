@@ -33,6 +33,13 @@ script pixsfm:
 `ssh ghamsariki@login.dei.unipd.it`
 
 
+Run sbatch
+
+`sbatch Master-Thesis-Structure-from-Motion/docker/pixsfm_job.sh `
+
+
 # Others
 
 `systemd-run --scope -p MemoryLimit=4096M -p CPUQuota=60% make`
+
+/bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_pixsfm.sh Master-Thesis-Structure-from-Motion/colmap_project Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py
