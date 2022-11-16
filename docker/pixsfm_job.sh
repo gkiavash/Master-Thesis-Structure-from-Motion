@@ -17,4 +17,4 @@
 cd $WORKING_DIR
 #your working directory
 
-srun singularity exec --nv Master-Thesis-Structure-from-Motion/sif_files/pixsfm_test.sif /bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_pixsfm.sh Master-Thesis-Structure-from-Motion/colmap_project Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py
+srun singularity exec --nv Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all.sif /bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_pixsfm.sh Master-Thesis-Structure-from-Motion/colmap_project Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py
