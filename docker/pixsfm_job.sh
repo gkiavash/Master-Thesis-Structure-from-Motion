@@ -10,7 +10,7 @@
 #SBATCH --ntasks 1
 #SBATCH --partition allgroups
 
-#SBATCH –-mem 32G
+#SBATCH --mem 32G
 #SBATCH --cpus-per-task 12
 #SBATCH --gres=gpu:1
 
