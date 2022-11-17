@@ -11,6 +11,11 @@ Build directly from a docker image:
 
 `sudo singularity build --sandbox pixsfm_raw.sif docker://gkiavash/pixsfm:1.0.3`
 
+Convert to sandbox
+
+`singularity build --sandbox lolcow_sandbox/ lolcow.sif`
+
+
 Run container interactively:
 
 `singularity shell pixsfm_raw.sif`
@@ -36,6 +41,15 @@ script pixsfm:
 Run sbatch
 
 `sbatch Master-Thesis-Structure-from-Motion/docker/pixsfm_job.sh `
+
+
+# Pixel-Perfect SfM
+
+To download weights for cnn
+`
+from pixsfm.features.models import s2dnet
+s2dnet.S2DNet(conf={})
+`
 
 
 # Others

@@ -17,6 +17,8 @@ RUN cd pixel-perfect-sfm &&  \
 # 1.0.2
 
 RUN python3 -m pip install kornia
+RUN apt-get install wget nano
+
 
 RUN chmod -R 777 pixel-perfect-sfm
 # 1.0.3
