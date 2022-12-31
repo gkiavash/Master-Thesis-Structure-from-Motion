@@ -57,3 +57,13 @@ s2dnet.S2DNet(conf={})
 `systemd-run --scope -p MemoryLimit=4096M -p CPUQuota=60% make`
 
 /bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_pixsfm.sh Master-Thesis-Structure-from-Motion/colmap_project Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py
+
+
+# Calibration
+
+`docker run -it -v /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2:/input gkiavash/calib:0.0.1 ../bin/cam_calib -f /input -c /input/out.yaml --bw 8 --bh 6 -q 0.4 -k -s 4 -u --opencv_format`
+
+in  singularity 
+
+`/cv_ext/bin/cam_calib -f /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2/ -c /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2/out.yaml --bw 8 --bh 6 -q 0.4 -k -s 4 -u --opencv_format`
+

@@ -1,0 +1,21 @@
+FROM nvidia/cuda:11.6.0-devel-ubuntu20.04
+
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+
+RUN apt install -y build-essential cmake libboost-filesystem-dev libopencv-dev libomp-dev libceres-dev libyaml-cpp-dev libgtest-dev libeigen3-dev
+
+RUN apt install -y git
+
+RUN git clone https://alberto_pretto@bitbucket.org/alberto_pretto/cv_ext.git &&  \
+    cd cv_ext &&  \
+    git checkout origin/dev --track &&  \
+    mkdir build &&  \
+    cd build
+
+RUN apt install -y libboost-system-dev libboost-thread-dev libboost-program-options-dev libboost-test-dev uuid-dev
+
+WORKDIR /cv_ext/build
+RUN cmake -DBUILD_EXAMPLES=ON ..
+
+RUN make
