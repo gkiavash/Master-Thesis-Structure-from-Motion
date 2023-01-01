@@ -3,10 +3,20 @@ import cv2 as cv
 
 
 def import_camera_params_from_opencv():
+    # Original from calibration images
+    # mtx = np.array(
+    #     [
+    #         [2.30314339e+03, 0.00000000e+00, 2.56253024e+03],
+    #         [0.00000000e+00, 2.31264462e+03, 1.92510736e+03],
+    #         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]
+    #     ]
+    # )
+
+    # Cx and Cy are changed to video frames' size
     mtx = np.array(
         [
-            [2.30314339e+03, 0.00000000e+00, 2.56253024e+03],
-            [0.00000000e+00, 2.31264462e+03, 1.92510736e+03],
+            [2.30314339e+03, 0.00000000e+00, 1352],
+            [0.00000000e+00, 2.31264462e+03, 769],
             [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]
         ]
     )
@@ -25,11 +35,20 @@ def import_camera_params_from_opencv():
 
 
 def import_camera_params_from_yaml():
+    # Original from calibration images
+    # mtx = np.array([
+    #     [2.2880100739220425e+03, 0.,                     2.5716169994772490e+03],
+    #     [0.,                     2.2845293722010042e+03, 1.9205706165878657e+03],
+    #     [0.,                     0.,                     1.]
+    # ])
+
+    # Cx and Cy are changed to video frames' size
     mtx = np.array([
-        [2.2880100739220425e+03, 0.,                     2.5716169994772490e+03],
-        [0.,                     2.2845293722010042e+03, 1.9205706165878657e+03],
+        [2.2880100739220425e+03, 0.,                     1352],
+        [0.,                     2.2845293722010042e+03, 769],
         [0.,                     0.,                     1.]
     ])
+
     dist = np.array(
         [
             [
@@ -44,11 +63,6 @@ def import_camera_params_from_yaml():
     return mtx, dist
 
 
-IMAGE_PATH = "/home/gkiavash/Downloads/sfm_projects/datasets/calibration/G0040134.JPG"
-IMAGE_PATH = "/home/gkiavash/Downloads/Master-Thesis-Structure-from-Motion/distorted_images/GOPR0037.JPG"
-IMAGE_PATH = "/home/gkiavash/Downloads/sfm_projects/datasets/street_2/images/scene10141.jpg"
-
-
 def undistort(IMAGE_PATH, mtx, dist, output_path, preview=True):
 
     img = cv.imread(IMAGE_PATH)
@@ -59,7 +73,7 @@ def undistort(IMAGE_PATH, mtx, dist, output_path, preview=True):
     print(h, w)
     print(mtx)
     print(dist)
-    newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w, h), .5, (w, h))
+    newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
     dst = cv.undistort(img, mtx, dist, None, newcameramtx)
     print(newcameramtx)
     print(roi)
@@ -78,9 +92,14 @@ def undistort(IMAGE_PATH, mtx, dist, output_path, preview=True):
     cv.destroyAllWindows()
 
 
+IMAGE_PATH = "/home/gkiavash/Downloads/sfm_projects/datasets/calibration/G0040134.JPG"
+IMAGE_PATH = "/home/gkiavash/Downloads/Master-Thesis-Structure-from-Motion/distorted_images/GOPR0037.JPG"
+IMAGE_PATH = "/home/gkiavash/Downloads/sfm_projects/datasets/street_2/images/scene10141.jpg"
+
+
 undistort(
     IMAGE_PATH,
-    *import_camera_params_from_yaml(),
-    # *import_camera_params_from_opencv(),
+    # *import_camera_params_from_yaml(),
+    *import_camera_params_from_opencv(),
     output_path="/home/gkiavash/Desktop/undist.jpg"
 )
