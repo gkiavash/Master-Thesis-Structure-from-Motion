@@ -63,6 +63,27 @@ def import_camera_params_from_yaml():
     return mtx, dist
 
 
+def import_camera_params_from_colmap():
+    mtx = np.array([
+        [3244, 0., 1352],
+        [0., 3244, 769],
+        [0., 0., 1.]
+    ])
+    # 3244.800000, 1352.000000, 769.000000, 0.000000
+    dist = np.array(
+        [
+            [
+                -2.6434196998339271e-01,
+                9.9571471417386093e-02,
+                -2.4160314862664079e-04,
+                -2.2267220647390027e-04,
+                -1.9631169477800196e-02
+            ]
+        ]
+    )
+    return mtx, dist
+
+
 def undistort(IMAGE_PATH, mtx, dist, output_path, preview=True):
 
     img = cv.imread(IMAGE_PATH)
@@ -100,6 +121,7 @@ IMAGE_PATH = "/home/gkiavash/Downloads/sfm_projects/datasets/street_2/images/sce
 undistort(
     IMAGE_PATH,
     # *import_camera_params_from_yaml(),
-    *import_camera_params_from_opencv(),
+    # *import_camera_params_from_opencv(),
+    *import_camera_params_from_colmap(),
     output_path="/home/gkiavash/Desktop/undist.jpg"
 )
