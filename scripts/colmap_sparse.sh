@@ -21,7 +21,7 @@ colmap feature_extractor \
 # Sequential Match
 colmap sequential_matcher \
    --database_path $DATASET_PATH/database.db \
-   --SiftMatching.max_num_matches 50000
+   --SiftMatching.max_num_matches 32000
 
 mkdir $DATASET_PATH/sparse
 
