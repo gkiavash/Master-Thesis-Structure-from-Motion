@@ -13,8 +13,9 @@ objp[:, :2] = np.mgrid[0:8, 0:6].T.reshape(-1, 2)
 objpoints = []  # 3d point in real world space
 imgpoints = []  # 2d points in image plane.
 
-BASE_PATH = sys.argv[1]
-# BASE_PATH = '../distorted_images/*.JPG'
+# BASE_PATH = sys.argv[1]
+BASE_PATH = '/home/gkiavash/Downloads/sfm_projects/datasets/calibration_3/images/*.jpg'
+OUTPUT_PATH = "/home/gkiavash/Downloads/sfm_projects/datasets/calibration_3/out_cv.json"
 
 images = glob.glob(BASE_PATH)
 print(images)
@@ -46,3 +47,16 @@ print("mtx", mtx)
 print("dist", dist)
 print("rvecs", rvecs)
 print("tvecs", tvecs)
+
+final_data = {
+    "ret": ret,
+    "mtx": mtx,
+    "dist": dist,
+    "rvecs": rvecs,
+    "tvecs": tvecs,
+}
+
+import json
+
+with open(OUTPUT_PATH, 'w') as f:
+    json.dump(final_data, f)
