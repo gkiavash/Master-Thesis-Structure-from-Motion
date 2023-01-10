@@ -12,7 +12,7 @@
 
 #SBATCH --mem 128G
 #SBATCH --cpus-per-task 12
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:rtx
 
 cd $WORKING_DIR
 #your working directory
