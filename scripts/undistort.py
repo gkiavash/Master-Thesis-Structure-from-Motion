@@ -99,6 +99,26 @@ def import_camera_params_from_opencv_3():
     return mtx, dist
 
 
+def import_camera_params_from_yaml_4():
+    mtx = np.array([
+        [1333.0333496269382, 0., 1362.2385792503271],
+        [0., 1152.7953767273623, 705.0287442757885],
+        [0., 0., 1.]
+    ])
+    dist = np.array(
+        [
+            [
+                -0.1697821786723204,
+                0.08551140923416184,
+                -0.0019370125115926041,
+                -0.005935762788516092,
+                -0.02775070400965532
+            ]
+        ]
+    )
+    return mtx, dist
+
+
 def undistort(IMAGE_PATH, mtx, dist, output_path, preview=True):
 
     img = cv.imread(IMAGE_PATH)
@@ -138,7 +158,7 @@ undistort(
     IMAGE_PATH,
     # *import_camera_params_from_yaml(),
     # *import_camera_params_from_opencv(),
-    *import_camera_params_from_yaml_3(),
+    *import_camera_params_from_yaml_4(),
     # *import_camera_params_from_opencv_3(),
-    output_path="/home/gkiavash/Desktop/undist_yaml.jpg"
+    output_path="/home/gkiavash/Desktop/undist_yaml_4.jpg"
 )
