@@ -1,0 +1,18 @@
+FROM nvidia/cuda:11.6.0-devel-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y  curl
+
+RUN ln -fs /usr/share/zoneinfo/$(curl http://ip-api.com/line?fields=timezone) /etc/localtime && \
+    apt-get install -y tzdata
+
+
+RUN apt-get update && apt-get install -y cmake g++ wget unzip build-essential git python3-opencv
+
+
+RUN git clone --recursive https://github.com/luigifreda/pyslam.git && \
+    cd pyslam && \
+    git checkout ubuntu20
+
+RUN cd pyslam && ./install_all.sh

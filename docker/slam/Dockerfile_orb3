@@ -1,0 +1,17 @@
+FROM nvidia/cuda:11.8.0-devel-ubuntu18.04
+
+
+RUN apt-get update && apt-get install -y build-essential curl cmake g++ wget unzip git
+RUN ln -fs /usr/share/zoneinfo/$(curl http://ip-api.com/line?fields=timezone) /etc/localtime && \
+    apt-get install -y tzdata
+
+
+#  Pangolin
+RUN git clone --recursive --branch v0.8 https://github.com/stevenlovegrove/Pangolin.git
+
+RUN apt-get install -y sudo
+WORKDIR "Pangolin"
+RUN sed -i 's/--no-install-recommends/--no-install-recommends -y/g' ./scripts/install_prerequisites.sh
+RUN ./scripts/install_prerequisites.sh -m apt -v true recommended
+RUN mkdir "build" && cmake -B build && cmake --build build
+RUN cmake --build build -t pypangolin_pip_install

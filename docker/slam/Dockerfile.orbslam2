@@ -1,0 +1,31 @@
+FROM nvidia/cuda:11.6.0-devel-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y  curl
+
+RUN ln -fs /usr/share/zoneinfo/$(curl http://ip-api.com/line?fields=timezone) /etc/localtime && \
+    apt-get install -y tzdata
+
+
+RUN apt-get update && apt-get install -y cmake g++ wget unzip
+
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.x.zip &&  \
+    wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.x.zip && \
+    unzip opencv.zip && \
+    unzip opencv_contrib.zip && \
+    mkdir -p build
+
+RUN cd build &&  \
+    cmake -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.x/modules ../opencv-4.x
+
+RUN cd build && make install
+
+
+RUN apt-get install -y libeigen3-dev
+
+RUN git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2
+
+RUN cd ORB_SLAM2 &&  \
+    chmod +x build.sh &&  \
+    ./build.sh \

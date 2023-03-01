@@ -1,0 +1,16 @@
+FROM gkiavash/opencv_os3:0.0.1
+
+
+RUN git clone --branch 3.1.0 https://gitlab.com/libeigen/eigen.git
+RUN cd eigen &&  \
+    mkdir "build" &&  \
+    cd build &&  \
+    cmake ../
+
+RUN cd eigen/build && make install
+
+#RUN apt-get install libeigen3-dev
+RUN apt-get install  -y libboost-all-dev
+
+RUN git clone https://github.com/UZ-SLAMLab/ORB_SLAM3.git ORB_SLAM3
+RUN cd ORB_SLAM3 && chmod +x build.sh && ./build.sh

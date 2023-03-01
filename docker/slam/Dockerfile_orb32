@@ -1,0 +1,5 @@
+FROM gkiavash/pre:0.0.1
+
+RUN mkdir "build"
+
+RUN cd build && cmake ..
