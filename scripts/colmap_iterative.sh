@@ -36,7 +36,7 @@ for FILE in $DATASET_PATH/incoming/*; do
   cp $FILE $DATASET_PATH/images/
 
   echo "$(basename $FILE)"
-  echo "$(basename $FILE)" >> $DATASET_PATH/images/image-list.txt
+  echo "$(basename $FILE)" >> $DATASET_PATH/image-list.txt
 
   colmap_sparse
 
