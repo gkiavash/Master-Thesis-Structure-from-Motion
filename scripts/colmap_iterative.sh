@@ -2,7 +2,7 @@ DATASET_PATH=$1
 
 
 colmap_sparse() {
-  sh ./colmap_sparse.sh $DATASET_PATH
+  sh /home/ghamsariki/Master-Thesis-Structure-from-Motion/scripts/colmap_sparse.sh $DATASET_PATH
 }
 
 # 1) start with first images
