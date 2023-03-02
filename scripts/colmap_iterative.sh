@@ -1,7 +1,7 @@
 DATASET_PATH=$1
 
 
-colmap_sparse() {
+colmap_sparse_() {
   colmap feature_extractor \
     --database_path $DATASET_PATH/database.db \
     --image_path $DATASET_PATH/images \
@@ -18,13 +18,13 @@ colmap_sparse() {
 
   colmap image_registrator \
       --database_path $DATASET_PATH/database.db \
-      --input_path $DATASET_PATH/sparse \
-      --output_path $DATASET_PATH/sparse \
+      --input_path $DATASET_PATH/sparse/0 \
+      --output_path $DATASET_PATH/sparse/0 \
       --Mapper.ba_refine_principal_point 1
 
   colmap bundle_adjuster \
-      --input_path $DATASET_PATH/sparse \
-      --output_path $DATASET_PATH/sparse
+      --input_path $DATASET_PATH/sparse/0 \
+      --output_path $DATASET_PATH/sparse/0
 }
 
 # 1) start with first images
@@ -38,6 +38,6 @@ for FILE in $DATASET_PATH/incoming/*; do
   echo "$(basename $FILE)"
   echo "$(basename $FILE)" >> $DATASET_PATH/image-list.txt
 
-  colmap_sparse
+  colmap_sparse_
 
 done
