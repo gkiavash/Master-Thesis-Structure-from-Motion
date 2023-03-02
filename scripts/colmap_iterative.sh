@@ -9,7 +9,7 @@ colmap_sparse() {
 colmap_sparse
 
 # 2) add new images iteratively
-for FILE in $DATASET_PATH/images_new/*; do
+for FILE in $DATASET_PATH/incoming/*; do
   cp $FILE $DATASET_PATH/images/
 
   echo "$(basename $FILE)"
