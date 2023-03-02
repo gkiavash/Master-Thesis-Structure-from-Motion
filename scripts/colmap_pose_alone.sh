@@ -37,3 +37,8 @@ colmap point_triangulator \
     --image_path $DATASET_PATH/images \
     --input_path $DATASET_PATH/sparse/model \
     --output_path $DATASET_PATH/sparse/model
+
+
+colmap bundle_adjuster \
+    --input_path $DATASET_PATH/sparse/model \
+    --output_path $DATASET_PATH/sparse/model/ba
