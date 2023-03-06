@@ -1,5 +1,6 @@
 DATASET_PATH=$1
 is_distorted=$2
+max_num_features=$3
 
 
 # The calib params below are obtained from the checkerboard dataset taken by camera with video settings
@@ -14,7 +15,7 @@ then
        --database_path $DATASET_PATH/database.db \
        --image_path $DATASET_PATH/images \
        --SiftExtraction.max_image_size 10000 \
-       --SiftExtraction.max_num_features 50000 \
+       --SiftExtraction.max_num_features $max_num_features \
        --ImageReader.single_camera 1 \
        --ImageReader.camera_model FULL_OPENCV \
        --ImageReader.camera_params $CALIB_PARAMS_YAML_4
@@ -23,7 +24,7 @@ else
        --database_path $DATASET_PATH/database.db \
        --image_path $DATASET_PATH/images \
        --SiftExtraction.max_image_size 10000 \
-       --SiftExtraction.max_num_features 50000 \
+       --SiftExtraction.max_num_features $max_num_features \
        --ImageReader.single_camera 1
 fi
 

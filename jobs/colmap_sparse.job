@@ -17,4 +17,4 @@
 cd $WORKING_DIR
 #your working directory
 
-srun singularity exec --writable --nv Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all_sandbox.sif /bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_sparse.sh Master-Thesis-Structure-from-Motion/colmap_project 1
+srun singularity exec --writable --nv Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all_sandbox.sif /bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_sparse.sh Master-Thesis-Structure-from-Motion/colmap_project 1 2000
