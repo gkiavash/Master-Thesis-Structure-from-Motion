@@ -1,24 +1,3 @@
-def prepare_images_txt(path_input, path_output):
-    path_input = "/home/gkiavash/Downloads/sfm_projects/sfm_compare_4_pp_calib" \
-                 "/sfm_compare_pp_calib_4/sparse/model_less_feat/0/images.txt"
-    path_output = "/home/gkiavash/Downloads/sfm_projects/sfm_compare_4_pp_calib" \
-                  "/sfm_compare_pp_calib_4/sparse/model_less_feat/0/images_raw.txt"
-
-    with open(path_input) as f:
-        lines = f.readlines()
-
-    images_txt_new = []
-
-    for i in range(4, len(lines)):
-        if i % 2 == 0:
-            images_txt_new.append(lines[i])
-        else:
-            images_txt_new.append("")
-
-    with open(path_output, "w") as outfile:
-        outfile.write("\n".join(images_txt_new))
-
-
 def pose_permute(path_input, path_output):
     """
     :param path_input: images.txt path
