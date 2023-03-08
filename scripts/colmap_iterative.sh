@@ -1,4 +1,6 @@
 DATASET_PATH=$1
+is_distorted=$2
+max_num_features=$3
 
 
 colmap_sparse_() {
@@ -6,7 +8,7 @@ colmap_sparse_() {
     --database_path $DATASET_PATH/database.db \
     --image_path $DATASET_PATH/incoming \
     --SiftExtraction.max_image_size 10000 \
-    --SiftExtraction.max_num_features 50000 \
+    --SiftExtraction.max_num_features $max_num_features \
     --ImageReader.existing_camera_id 1 \
     --image_list_path $DATASET_PATH/image-list.txt
 
@@ -22,7 +24,7 @@ colmap_sparse_() {
 }
 
 # 1) start with first images
-sh /home/ghamsariki/Master-Thesis-Structure-from-Motion/scripts/colmap_sparse.sh $DATASET_PATH
+sh /home/ghamsariki/Master-Thesis-Structure-from-Motion/scripts/colmap_sparse.sh $DATASET_PATH $is_distorted $max_num_features
 
 
 # 2) add new images iteratively
