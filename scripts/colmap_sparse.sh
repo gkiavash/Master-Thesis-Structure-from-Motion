@@ -1,6 +1,7 @@
 DATASET_PATH=$1
 is_distorted=$2
 max_num_features=$3
+is_pose_known=$4
 
 
 # The calib params below are obtained from the checkerboard dataset taken by camera with video settings
@@ -16,6 +17,7 @@ then
        --image_path $DATASET_PATH/images \
        --SiftExtraction.max_image_size 10000 \
        --SiftExtraction.max_num_features $max_num_features \
+       --SiftExtraction.estimate_affine_shape 1 \
        --ImageReader.single_camera 1 \
        --ImageReader.camera_model FULL_OPENCV \
        --ImageReader.camera_params $CALIB_PARAMS_YAML_4
@@ -25,6 +27,7 @@ else
        --image_path $DATASET_PATH/images \
        --SiftExtraction.max_image_size 10000 \
        --SiftExtraction.max_num_features $max_num_features \
+       --SiftExtraction.estimate_affine_shape 1 \
        --ImageReader.single_camera 1
 fi
 
@@ -34,10 +37,23 @@ colmap sequential_matcher \
    --database_path $DATASET_PATH/database.db \
    --SiftMatching.max_num_matches 32000
 
-mkdir $DATASET_PATH/sparse
+mkdir -p $DATASET_PATH/sparse
 
-colmap mapper \
-    --database_path $DATASET_PATH/database.db \
-    --image_path $DATASET_PATH/images \
-    --output_path $DATASET_PATH/sparse \
-    --Mapper.ba_refine_principal_point 1
+if [[ $is_pose_known -eq 0 ]]
+then
+    colmap mapper \
+        --database_path $DATASET_PATH/database.db \
+        --image_path $DATASET_PATH/images \
+        --output_path $DATASET_PATH/sparse \
+        --Mapper.ba_refine_principal_point 1
+else
+    colmap point_triangulator \
+        --database_path $DATASET_PATH/database.db \
+        --image_path $DATASET_PATH/images \
+        --input_path $DATASET_PATH/sparse/model \
+        --output_path $DATASET_PATH/sparse/model
+
+    colmap bundle_adjuster \
+        --input_path $DATASET_PATH/sparse/model \
+        --output_path $DATASET_PATH/sparse/model
+fi
