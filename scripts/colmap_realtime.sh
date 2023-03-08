@@ -20,7 +20,7 @@ slam_to_sfm() {
     --output_type TXT
 
   echo "empty points3D.txt"
-  echo $POSE_MODEL_PATH/points3D.txt
+  echo > $POSE_MODEL_PATH/points3D.txt
   python3 /home/ghamsariki/Master-Thesis-Structure-from-Motion/scripts/utils/colmap_pose.py $POSE_MODEL_PATH/images.txt $POSE_MODEL_PATH/images.txt
 
   echo "Remove database.db"
