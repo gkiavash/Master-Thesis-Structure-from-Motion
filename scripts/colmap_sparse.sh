@@ -41,12 +41,14 @@ mkdir -p $DATASET_PATH/sparse
 
 if [[ $is_pose_known -eq 0 ]]
 then
+    echo "mapper"
     colmap mapper \
         --database_path $DATASET_PATH/database.db \
         --image_path $DATASET_PATH/images \
         --output_path $DATASET_PATH/sparse \
         --Mapper.ba_refine_principal_point 1
 else
+    echo "point_triangulator"
     colmap point_triangulator \
         --database_path $DATASET_PATH/database.db \
         --image_path $DATASET_PATH/images \
