@@ -12,6 +12,7 @@ slam() {
 }
 
 slam_to_sfm() {
+  mkdir -p $POSE_MODEL_PATH
   colmap model_converter \
     --input_path $DATASET_PATH/sparse/0 \
     --output_path $POSE_MODEL_PATH \
