@@ -32,6 +32,8 @@ FILE=$DATASET_PATH/sparse/0/images.bin
 
 if [ ! -f "$FILE" ]; then
   slam
+else
+  echo "model exists"
 fi
 
 slam_to_sfm
