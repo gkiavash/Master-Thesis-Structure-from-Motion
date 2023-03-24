@@ -1,0 +1,158 @@
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+
+% Document
+\begin{document}
+    \section{Structure from Motion Revisited}
+    Structure from Motion is the task of calculating the 3D structure of a scene the pose of cameras from
+    images captured in multiple views or video frames. SfM is an important tool in many applications like
+    Visual SLAM, 3D scanning, and Autonomous Driving. There are several algorithms used in SFM that help
+    in reconstructing the 3D structure.
+    Incremental Structure from Motion can be viewed as a pipeline that contains 5 separated steps:
+
+    \paragraph{1. Feature detection and matching:} The first step in SFM is feature detection and matching, where
+    the algorithm identifies common features or points in the 2D images or video frames. These features
+    can be edges, corners, blobs, or other distinctive patterns that can be detected consistently across
+    the images. The algorithm then matches these features between different images or frames, using techniques
+    like scale-invariant feature transform (SIFT), or other matching algorithms.
+
+    \paragraph{2. Reconstruction Initialization:} If the pipeline is considered as a iterative or sequential process,
+    a starting point is essential. Choosing a good initial pair of images is so important. Because in the
+    process that involves optimizing the camera parameters and 3D structure to minimize the difference between
+    the observed 2D features and the projected 3D points, without a good initial estimate, the optimization
+    process may get stuck in local minima or diverge to incorrect solutions.
+
+    \paragraph{3. Image Registration and Triangulation:} After initialization, the algorithm uses triangulation to estimate
+    the 3D position of the matched features in the scene. Triangulation involves finding the intersection point
+    of two or more rays of light that originate from the camera and pass through the 2D features. The intersection
+    point represents the 3D position of the feature in the scene.
+
+    \paragraph{4. Bundle Adjustment:} As the triangulation process involves some degree of error, there may be inconsistencies
+    or misalignments between the estimated camera parameters and the triangulated 3D points. Bundle adjustment is
+    an optimization technique used to refine the estimated camera parameters and 3D points, so that they align
+    better with the observed 2D features. This step involves minimizing the error between the observed 2D features
+    and the projections of the 3D points onto the images, while also adjusting the camera parameters.
+
+    \section{Related Works}
+    Structure of Motion is a core task for many projects. It gives the ability to obtain detailed 3D models
+    of the environment from 2D images or video sequences, and these information can be used widely in object tracking,
+    object detection, and many other low level tasks, and also, understanding the scene and detecting speed and
+    positions of objects for autonomous driving as a high level task. Therefore, the accuracy and the speed
+    of the algorithm is crucial. As an example for accuracy, a tiny error, e.g. 1 degree, in the rotation of
+    a camera could cause several meters misalignment in the coordinates of the points especially in open scenes.
+    So, over the past few decades, there has been lots of efforts to optimize each part of these algorithms.
+    Here is a review of the recent best papers in this area:
+
+    \newpage
+    \section{Researches in Feature Matching}
+    Each paper usually focuses on one or two tasks in the SfM pipeline. The first step, feature matching,
+    is one of the biggest challenges in Computer Vision as they are used to identify the corresponding
+    matches among the input images. Because of that, there has been tons of reasearches in this area.
+    Some of the chanllenges are moving objects, deformation in different viewpoints, occlusion, illumination
+    changes, etc.
+
+    ~\cite{Dusmanu2020Multi} tracks each keypoint in all input images, and creates a tentative
+    matches graph with keypoints as nodes and matches as edges. Each keypoint is known by its surrounding pixels
+    information. So, a h*w patch is calculated by CNN. Then, each pair of patches in the graph is refined(or better
+    to say aligned) by a neural network with Siamese architecture followed by a correlation layer as dot product
+    similarity. Each keypoint could be seen in multiple images. A single incorrect match or displament can cause
+    cascade of errors in the results. Therefore, another refinement is also applied to track of each keypoint
+    detected in multiple images. For each track, a non-linear equation for minimizing dot similarity between
+    patches is optimized. The idea of this paper is also used in \cite{lindenberger2021pixsfm} which will be
+    described in detail in the next chapter.
+
+    ~\cite{wang2021deep} uses optical flow to predict dense correspondences between two frames. The method is
+    able to find better matching points and therefore more accurate poses and depth maps, especially for
+    textureless and occluded areas. They use DICLFlow, explained in \cite{wang2020displacement} to generate
+    dense matching points between two consecutive frames. This method uses a displacement invariant matching
+    cost learning strategy and a soft-argmin projection layer to ensure that the network learns dense matching
+    points rather than image-flow regression. Noisiy matches like moving
+    objects are filtered out by the means of SIFT features. After calclulating the essential matrix , using
+    the classic five-point algorithm with RANSAC scheme, with the dense matching points from optical flow estimation,
+    the dense depth map is computed by performing triangulation. Before this process, the matching is performed
+    again by constraining the search space to epipolar lines computed from the relative camera poses. They also,
+    introduced a Scale-Invariant Depth Module to deal with the up-to-scale relative pose and mismatch between the
+    scale of the camera motion and the scale of the depth map. #TODO.
+
+    \newpage
+    \section{Researches in Bundle Adjustment}
+    Bundle Adjustment algorithms optimizes the camera parameters and the output points by minimizing the
+    difference between the observed image points and the corresponding projected 3D points. However, there
+    are some disadvantages with this technique. Bundle Adjustment requires solving a large system of
+    non-linear equations, which can be computationally expensive, especially for large datasets. This can be a
+    significant drawback, especially when processing real-time data. It can be sensitive to the initial values.
+    If the initial values are not accurate, the optimization may fail converge. The optimization problem can have
+    many local minima which means high probability in resulting in suboptimal or incorrect results.
+
+
+
+    ~\cite{tang2019banet} mainly focuses on bundle adjustment step in SfM pipeline. They implemented feature-metric
+    bundle adjustment that minimizes feature-metric errors between feature pyramid of images obtained by CNNs.
+    As \cite{LSDSLAM} says, there are two types of BAs:
+    - Typical geometric BA with re-projection error(pixel coordinates): Only a few pixels, i.e. keypoints, are
+    taken into account which comes with keypoints detection and matching challenges
+    - Photometric BA algorithm(all aligned pixel, pixel intensities as error): It has good accuracy,
+    especially at less textured scenes. However, the disadvantages would be sensitivity to camera exposure,
+    illumination changes, and outliers such as moving objects. Also, considering all pixels would increase
+    the computation dramatically.
+    BA-Net creates a pyramid of features for each image and align them. The featire pyramid is generated by
+    multi-scale hierarchy of CNN(DRM-54, \cite{yu2017dilated}) to construct feature pyramids. Then, the BA equation
+    to minimize would be:
+    \[ e^f_{i,j}(X) &= F_{i}(\pi(T_{i},d_{j} \cdot q_{j}))-F_{1}(q_{j}) \]
+    where F = {Fi | i = 1  Ni} are feature pyramids of images I = {Ii | i = 1 · · · Ni}
+
+    For the generation of dense reconstruction, the depth of all pixels in all images are required. However, the
+    computation of these values is super expensive. This paper, also, uses b a great approach to deal with this
+    issue that is mentioned in \cite{tateno2017cnnslam} and \cite{yang2018deep}. A set of arbitrary basis depth maps
+    is created. Then, the final depth map is generated as a linear combination of these basis depth maps, which
+    is: D = ReLU(w^T * B). "w" will be optimized in our BA-Layer. Generally, this idea is great when the number of
+    values to calculate is too high.
+
+    \newpage
+    \section{Pixel-Perfect Structure-from-Motion with Featuremetric Refinement}
+    Among all reviewed paper, \cite{lindenberger2021pixsfm} has the best performance. The paper
+    proposes two stages to improve the accuracy of structure-from-motion for 3D reconstruction.
+    In the first stage, the initial keypoint locations are adjusted prior to any geometric estimation
+    by optimizing a direct cost over dense feature maps. In the second stage, 3D points and camera poses
+    are refined as post-processing using a featuremetric error based on dense features obtained by CNN.
+    The paper produced accurate reconstructions and scaled well to large scenes with thousands of images.
+    Also, their contribution could be used as an extra step in the SfM pipeline. So, it can be easily
+    integrated with any other papers.
+
+    They use the initial idea of \cite{Dusmanu2020Multi} that separates the tracks for each keypoint, and
+    adjusts their locations by optimizing the geometric cost over the input images which the keypoint
+    is seen. It improved SfM, but has limited accuracy and scalability. To solve that, This paper proposes
+    a feature map for each image using convolution neural networks. The feature map condenses the dense
+    information from surrounding pixels into a vector for each pixel. The reason behind this step is the
+    fact that refining geometry is an inherently local operation. The dense information only needs to be
+    locally accurate and invariant but not globally discriminative.
+    For the first stage, i.e. keypoint adjustment refinement, the locations of 2D keypoints belonging to the same
+    track j is refined by optimizing its featuremetric consistency along tentative matches. The loss function is
+    #TOCO
+
+    In compare to \cite{Dusmanu2020Multi}, optimizing the cost of feature maps instead of the patch neighboring
+    pixels has better efficiency.
+
+    In the second stage, i.e. bundle adjustment refinement, typical approach uses the euclidean distance between the point and
+    its reprojected 3D from another view. However, this paper considers the difference between the feature vectors
+    of the point and the feature vector of the point where the 3D point is reprojected. The loss fubnction is
+    #TODO
+
+    Also, instead of acquiring the cost equation for each pair of views, one image is considered as a reference,
+    and the cost equations are written between the reference image and the rest of views. it reduces the number
+    of residuals from O(N^2) to O(N). This is not good for the sequential video frames. Because newer frames will be
+    too far from the reference image. However, it is achievable if the new input is a batch of new images, and
+    the refinement is applied to each batch separately.
+
+    As it is
+
+
+
+
+
+
+
+\end{document}
