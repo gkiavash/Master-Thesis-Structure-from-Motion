@@ -12,22 +12,34 @@
 % Document
 \begin{document}
     \section{Pinhole Camera}
-        A pinhole camera is, basically, consists of a small hole and a plane behind. When a light ray from
-    the objects enters through the pinhole, it projects an inverted image onto the plane. And, if the
-    image is rotated around the pinhole, the virtual image is achieved.
 
-    Such terms as focal length, main point, and aspect ratio are examples of intrinsic parameters,
-    which characterize the internal geometry of the camera. The distance between the lens's
-    center and the image sensor is known as the focal length. The intersection of the optical axis
-    of the lens and the image sensor is the primary point. The ratio of the image's width to its
-    height is known as the aspect ratio.
-    Extrinsic parameters are those that describe how the camera is positioned and oriented in
-    relation to the subject of the shot. The translation, rotation, and scaling of the camera are
-    some of these parameters.
+    A pinhole camera is, basically, consists of a small hole and a plane behind. The light from the real world
+    object passes through the hole and forms an inverted and laterally inverted image on the plane which is at
+    a distance F from the hole. For the sake of simplicity, it is assumed that there is a virtual screen in front
+    of the hole at the same distance F. The same image from the real screen is excepted which is upright if the
+    image falls on this virtual screen. The distance between the camera's center and the image plane is known
+    as the focal length. The intersection of the optical axis of the lens and the image plane is the principal point.
+    These parameters, which characterize the internal geometry of the camera, are known as intrinsic parameters.
 
-    \section{Epipolar geometry}
+    #TODO pinhole_2.PNG
 
-    \paragraph{Epipolar geometry}, also refers to the geometry of two images of a 3D scene taken
+    Cameras can have different focal lengths along x and y axes(f_x, f_y). And, principal point (c_x, c_y) are
+    the coordinates of the optical center in the image plane.
+
+    Extrinsic parameters describe how the camera is positioned and oriented in relation to the real world frame.
+    The translation \mathbf{t} and rotation \mathbf{R} matrices, and scaling of the camera are some of these parameters.
+
+    a 3D point, is projected onto the image plane, by transforming the point from world coordinate system to
+    the camera coordinate system using the extrinsic parameters (Rotation \mathbf{R} and Translation \mathbf{t}).
+    After having the coordinates of the 3D point from the center of the camera, using the intrinsic parameters
+    of the camera, the point is projected onto the image plane. This transformation from world frame to image plane
+    is encapsulated in projection matrix.
+    #TODO: projection_mat.png
+
+
+    \section{Stereo Cameras}
+
+    \paragraph{Epipolar geometry}, refers to the geometry of two images of a 3D scene taken
     by two cameras. The two cameras are presumed to have a defined relative pose, which is
     the position and orientation of one camera in relation to the other, and a known internal calibration
     (i.e., focal length, main point). Two geometric primitives, epipolar lines and epipoles, can be used
@@ -111,13 +123,23 @@
     \end{enumerate}
     {\includegraphics[scale=0.15]{distortion.PNG}}
 
-    \paragraph{Camera calibration}is defined as estimating the intrinsic parameters like focal length,
+    \paragraph{Camera calibration} is defined as estimating the intrinsic parameters like focal length,
     principal point, and distortion coefficients, as well as the extrinsic parameters like camera position
     and orientation for each image or frame. The accuracy of this step has significant impact on 3D reconstruction.
     As it is mentioned in previous sections, the depth of a pixel has direct relation with focal length. The depth
     can be in meters, while focal length is usually around millimeters. Therefore, a small error in focal length
     can cause high misplacement of a 3D point.
 
-Once the features are detected and matched, the next step is to calibrate the camera parameters
+    Here is a brief general idea of Zhang's method for calibration.
+    \paragraph{Homography:} Let there be two images from the same planar scene, e.g. an identity card, but from
+    different viewpoints. The second view can be obtained from the first view by multiplying the first image by
+    a 3x3 matrix called Homography matrix.
+
+
+    The goal of the calibration process is to find the 3x3 matrix K, the 3x3 rotation matrix \mathbf{R}, and
+    the 3x1 translation vector \mathbf{t} using a set of known 3D points (X_w, Y_w, Z_w) and their corresponding
+    image coordinates (u, v).
+
+%    Once the features are detected and matched, the next step is to calibrate the camera parameters
 
 \end{document}
