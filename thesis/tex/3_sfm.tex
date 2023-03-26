@@ -7,34 +7,49 @@
 % Document
 \begin{document}
     \section{Structure from Motion Revisited}
-    Structure from Motion is the task of calculating the 3D structure of a scene the pose of cameras from
+    Structure from Motion is the task of calculating the 3D structure of a scene and the pose of cameras from
     images captured in multiple views or video frames. SfM is an important tool in many applications like
     Visual SLAM, 3D scanning, and Autonomous Driving. There are several algorithms used in SFM that help
-    in reconstructing the 3D structure.
-    Incremental Structure from Motion can be viewed as a pipeline that contains 5 separated steps:
+    in reconstructing the 3D structure. In this chapter, Incremental Structure from Motion will be explained
+    as it is the base algorithm for most papers in these criteria. The algorithm can be viewed as a pipeline 
+    that contains the following separated steps:
 
     \paragraph{1. Feature detection and matching:} The first step in SFM is feature detection and matching, where
     the algorithm identifies common features or points in the 2D images or video frames. These features
     can be edges, corners, blobs, or other distinctive patterns that can be detected consistently across
-    the images. The algorithm then matches these features between different images or frames, using techniques
-    like scale-invariant feature transform (SIFT), or other matching algorithms.
+    the images. The algorithm, then, matches these features between different input frames. This step is one
+    of the most challenging parts in SfM. Occlusion, illumination changes, perspective transformation, and moving objects
+    are some of them. However, since this is a core task in many Computer Vision tasks, there has been
+    tons of researches in feature detection and matching, including deep based approaches. SIFT, SuperPoint, 
+    S2-Net, R2D2 are often used among SfM related papers.
+    
+    \paragraph{2. Geometric Verification:} raw matches are not enough for the scene reconstruction.
+    Matches in similar repeated patterns, multiple objects in one image, etc, are some issues that may cause wrong
+    poses and 3D points. Outliers must be removed from the list of matches. Therefore, by using RANSAC and epipolar
+    geometry, camera matrices, i.e. homography(H), Essential(E), and Fundamental(F) matrices, can be calculated
+    to verify the geometric consistency of the reconstructed 3D points and camera poses.
+    Without geometric verification, the reconstructed 3D model may contain errors that can lead to incorrect result.
 
-    \paragraph{2. Reconstruction Initialization:} If the pipeline is considered as a iterative or sequential process,
-    a starting point is essential. Choosing a good initial pair of images is so important. Because in the
-    process that involves optimizing the camera parameters and 3D structure to minimize the difference between
-    the observed 2D features and the projected 3D points, without a good initial estimate, the optimization
-    process may get stuck in local minima or diverge to incorrect solutions.
+    \paragraph{2. Reconstruction Initialization:} If the pipeline is considered as an iterative or sequential process,
+    a starting point is essential. Choosing a good initial pair of images is, also, so important. At the end of
+    each iteration, the camera parameters and 3D structure are optimized, i.e. the differences between
+    the observed 2D features and the projected 3D points are minimized. Without a good initial estimate,
+    the optimization process usually doesn't converge and stuck in local minima. A good initial pair can be
+    chosen from the top of list of images that are sorted based on the number of correspondences matches.
 
     \paragraph{3. Image Registration and Triangulation:} After initialization, the algorithm uses triangulation to estimate
-    the 3D position of the matched features in the scene. Triangulation involves finding the intersection point
+    the 3D position of the matched features in every new image. Triangulation involves finding the intersection point
     of two or more rays of light that originate from the camera and pass through the 2D features. The intersection
     point represents the 3D position of the feature in the scene.
 
-    \paragraph{4. Bundle Adjustment:} As the triangulation process involves some degree of error, there may be inconsistencies
-    or misalignments between the estimated camera parameters and the triangulated 3D points. Bundle adjustment is
-    an optimization technique used to refine the estimated camera parameters and 3D points, so that they align
-    better with the observed 2D features. This step involves minimizing the error between the observed 2D features
-    and the projections of the 3D points onto the images, while also adjusting the camera parameters.
+    \paragraph{4. Bundle Adjustment:} As the previous processes involve some errors, there may be inconsistencies
+    or misalignment between the estimated camera parameters and the triangulated 3D points, and it could get worse
+    and worse for every new image. Bundle adjustment refines those parameters by rewriting the non-linear
+    reprojection equations which contain camera poses' matrices, calibration parameters, and, 3D points positions.
+    It typically uses an optimization algorithm such as Levenberg-Marquardt to minimize
+    the reprojection error. The optimization problem can be non-linear and high-dimensional, and it may take a
+    long time to converge to a good solution. However, bundle adjustment can significantly improve the accuracy
+    of the reconstructed 3D scene and camera poses.
 
     \section{Related Works}
     Structure of Motion is a core task for many projects. It gives the ability to obtain detailed 3D models
@@ -117,21 +132,24 @@
     proposes two stages to improve the accuracy of structure-from-motion for 3D reconstruction.
     In the first stage, the initial keypoint locations are adjusted prior to any geometric estimation
     by optimizing a direct cost over dense feature maps. In the second stage, 3D points and camera poses
-    are refined as post-processing using a featuremetric error based on dense features obtained by CNN.
+    are refined as post-processing using a featuremetric error based on dense features map obtained by
+    Convolutional Neural Network.
     The paper produced accurate reconstructions and scaled well to large scenes with thousands of images.
     Also, their contribution could be used as an extra step in the SfM pipeline. So, it can be easily
-    integrated with any other papers.
+    integrated with any other papers' contributions.
 
     They use the initial idea of \cite{Dusmanu2020Multi} that separates the tracks for each keypoint, and
     adjusts their locations by optimizing the geometric cost over the input images which the keypoint
-    is seen. It improved SfM, but has limited accuracy and scalability. To solve that, This paper proposes
+    is seen. \cite{Dusmanu2020Multi} improved SfM, but has limited accuracy and scalability. To solve that, This paper proposes
     a feature map for each image using convolution neural networks. The feature map condenses the dense
     information from surrounding pixels into a vector for each pixel. The reason behind this step is the
-    fact that refining geometry is an inherently local operation. The dense information only needs to be
+    fact that refining geometry is an inherently local operation, and the dense information only needs to be
     locally accurate and invariant but not globally discriminative.
     For the first stage, i.e. keypoint adjustment refinement, the locations of 2D keypoints belonging to the same
     track j is refined by optimizing its featuremetric consistency along tentative matches. The loss function is
-    #TOCO
+
+    \[ E_{FKA}^j &= \sum_{(u,v) \in M_{j}}w_{uv}\lVert F_{i(u)}[p_{u}] - F_{i(v)}[p_{v}]\rVert_{\gamma} \]
+
 
     In compare to \cite{Dusmanu2020Multi}, optimizing the cost of feature maps instead of the patch neighboring
     pixels has better efficiency.
@@ -139,7 +157,9 @@
     In the second stage, i.e. bundle adjustment refinement, typical approach uses the euclidean distance between the point and
     its reprojected 3D from another view. However, this paper considers the difference between the feature vectors
     of the point and the feature vector of the point where the 3D point is reprojected. The loss fubnction is
-    #TODO
+
+    \[ E_{FBA} &= \sum_{j} \sum_{(i,u) \in \tau_{j}}\lVert F_{i}[ \prod (R_{i}P_{j} + t_{i},C_{i})] - f^j\rVert_{\gamma} \]
+
 
     Also, instead of acquiring the cost equation for each pair of views, one image is considered as a reference,
     and the cost equations are written between the reference image and the rest of views. it reduces the number
