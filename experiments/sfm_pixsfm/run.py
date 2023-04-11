@@ -1,11 +1,14 @@
 import sys
 from pathlib import Path
+from omegaconf import DictConfig, OmegaConf
+
 from hloc import (
     extract_features,
     match_features,
     pairs_from_exhaustive
 )
 from pixsfm.refine_hloc import PixSfM
+from pixsfm.configs import parse_config_path, default_configs
 
 
 BASE_DIR = sys.argv[1]
@@ -65,7 +68,10 @@ match_features.main(
     matches=path_matches
 )
 
-refiner = PixSfM()
+
+conf = OmegaConf.load(parse_config_path("default"))
+conf["KA"]["apply"] = False
+refiner = PixSfM(conf)
 reconstruction, sfm_outputs = refiner.reconstruction(
     output_dir=path_sfm,
     image_dir=path_images,
