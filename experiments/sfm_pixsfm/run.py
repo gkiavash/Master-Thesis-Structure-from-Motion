@@ -70,7 +70,8 @@ match_features.main(
 
 
 conf = OmegaConf.load(parse_config_path("default"))
-conf["KA"]["apply"] = False
+conf["mapping"]["KA"]["apply"] = False
+
 refiner = PixSfM(conf)
 reconstruction, sfm_outputs = refiner.reconstruction(
     output_dir=path_sfm,
