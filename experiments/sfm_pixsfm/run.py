@@ -66,7 +66,7 @@ match_features.main(
 )
 
 refiner = PixSfM()
-reconstruction, sfm_outputs = refiner.triangulation(
+reconstruction, sfm_outputs = refiner.reconstruction(
     output_dir=path_sfm,
     image_dir=path_images,
     pairs_path=path_pairs,
