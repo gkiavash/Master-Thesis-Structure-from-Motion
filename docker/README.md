@@ -67,3 +67,14 @@ in  singularity
 
 `/cv_ext/bin/cam_calib -f /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2/ -c /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2/out.yaml --bw 8 --bh 6 -q 0.4 -k -s 4 -u --opencv_format`
 
+
+
+# Steps to create a new singularity in ClusterDei:
+
+1. Create docker file and pushed to Docker Hub
+2. In Ubuntu VM, build the singularity file WITHOUT sandbox: `sudo singularity build pixsfm_raw_no_sandbox.sif docker://gkiavash/pixsfm:1.0.4`
+3. ssh copy the file to ClusterDei: 
+   `
+   sudo scp pixsfm_raw_.sif ghamsariki@login.dei.unipd.it:/home/ghamsariki/Master-Thesis-Structure-from-Motion/sif_files/
+   `
+4. Convert it to sandbox sif file by using sbatch file

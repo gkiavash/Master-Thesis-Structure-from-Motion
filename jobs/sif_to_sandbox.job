@@ -16,4 +16,4 @@
 cd $WORKING_DIR
 #your working directory
 
-srun singularity build --sandbox Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all_sandbox.sif/ Master-Thesis-Structure-from-Motion/sif_files/pixsfm_all.sif
+srun singularity build --sandbox Master-Thesis-Structure-from-Motion/sif_files/pixsfm_1_0_4.sif/ Master-Thesis-Structure-from-Motion/sif_files/pixsfm_raw_.sif
