@@ -31,7 +31,7 @@
     \paragraph{Spare and Dense Reconstructions} are both implemented in COLMAP. Sparse reconstruction results in
     the 3D point cloud of only the detected features, while dense reconstruction refers to the point cloud of all
     pixels in the input images. Dense reconstrution is achievable after obtaining sparse reconstruction with camera
-    poses. By default, It run PatchMatch algorithm \cite{journals/tog/BarnesSFG09}, and it is a high time-consuming task.
+    poses. By default, It runs PatchMatch algorithm \cite{journals/tog/BarnesSFG09}, and it is a high time-consuming task.
     Through our project, sparse reconstruction is only considered.
 
     \paragraph{Customization} is the most important feature in this project. Each step of SfM pipline can be executed
@@ -173,7 +173,8 @@
     \end{figure}
 
     \section{Refinement}
-
+    ~\cite{lindenberger2021pixsfm} is described in detail in the previous chapter. Here, we apply this approach to
+    refine our point clouds.
 
     \section{Compare the results with City point cloud}
     
