@@ -54,14 +54,14 @@ def pairs_from_sequential(
         f.write('\n'.join(' '.join([i, j]) for i, j in pairs))
 
 
-pairs_from_sequential(
-    output=path_pairs,
-    image_list=path_images,
-)
-# pairs_from_exhaustive.main(
+# pairs_from_sequential(
 #     output=path_pairs,
-#     features=path_keypoints,
+#     image_list=path_images,
 # )
+pairs_from_exhaustive.main(
+    output=path_pairs,
+    features=path_keypoints,
+)
 
 match_features.main(
     conf=matcher_conf,
