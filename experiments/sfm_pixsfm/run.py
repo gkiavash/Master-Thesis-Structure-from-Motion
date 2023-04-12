@@ -24,6 +24,8 @@ path_cache = BASE_DIR / f'dense_features_cache.h5'
 keypoints_conf = extract_features.confs["r2d2"]
 matcher_conf = match_features.confs["NN-superpoint"]
 
+keypoints_conf["model"]["max_keypoints"] = 30000
+
 extract_features.main(
     keypoints_conf,
     path_images,
