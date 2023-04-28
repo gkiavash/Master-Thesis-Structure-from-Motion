@@ -1,3 +1,9 @@
+# Setup environments
+
+Since singularity provides the environments, and it uses docker images, all environments 
+are implemented and tested in docker files in `/docker` directory
+
+
 # Singularity
 ### build sif:
 
@@ -7,13 +13,11 @@ Build from .dif file:
 
 Build directly from a docker image:
 
-`sudo singularity build colmap_local.sif docker-daemon://gkiavash/colmap:0.0.1`
-
 `sudo singularity build --sandbox pixsfm_raw.sif docker://gkiavash/pixsfm:1.0.3`
 
 Convert to sandbox
 
-`singularity build --sandbox lolcow_sandbox/ lolcow.sif`
+`sudo singularity build --sandbox output_sif/ input.sif`
 
 
 Run container interactively:
@@ -37,26 +41,20 @@ script pixsfm:
 
 `ssh ghamsariki@login.dei.unipd.it`
 
+Run job file: 
 
-Run sbatch
+`sbatch /to/job/path`
 
 `sbatch Master-Thesis-Structure-from-Motion/docker/pixsfm_job.sh `
 
-
-# Pixel-Perfect SfM
-
-To download weights for cnn
-`
-from pixsfm.features.models import s2dnet
-s2dnet.S2DNet(conf={})
-`
+Check job status: `squeue`
 
 
 # Others
 
-`systemd-run --scope -p MemoryLimit=4096M -p CPUQuota=60% make`
+In order to limit the resources for specific linux command:
 
-/bin/bash Master-Thesis-Structure-from-Motion/scripts/colmap_pixsfm.sh Master-Thesis-Structure-from-Motion/colmap_project Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py
+`systemd-run --scope -p MemoryLimit=4096M -p CPUQuota=60% make`
 
 
 # Calibration
