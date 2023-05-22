@@ -127,5 +127,5 @@ if __name__ == "__main__":
     ply.show_range_coords()
     ply.align_to_z(z_=1, preview=False)  # city = 1, sfm = -1
     # ply.show_range_coords()
-    # ply.save("fused_uniformed_aligned.ply")
+    # ply.save("street_4_3_3_fused_uniformed_aligned.ply")
     ply.elevation_map(preview=True)
