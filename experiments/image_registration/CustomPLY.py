@@ -84,7 +84,7 @@ class CustomPLY:
 
     def align_to_z(self, z_=-1, overwrite=False, preview=False):
         plane_model, inliers = self.ply.segment_plane(
-            distance_threshold=self.radius,
+            distance_threshold=self.radius(),
             ransac_n=1000,
             num_iterations=1000
         )
@@ -297,6 +297,7 @@ class CustomPLY:
 if __name__ == "__main__":
     # street_4_0_1:
     # ply_path = "D:\sfm_dense\street_4_0_1\color_pd30_8bit_street_4_0_sliced_uniformed.ply"
+    # ply_path = "F:/dt/4_0_1/fused_scaled_uniformed.ply"
 
     # street_4_1_3:
     # ply_path = "D:\sfm_dense\street_4_1_3\street_4_1_3_color_pd30_8bit_small.ply"
@@ -317,40 +318,53 @@ if __name__ == "__main__":
     # street_4_3_3
     # ply_path = "D:/sfm_dense/street_4_3_3/dense/0/fused.ply"
     # ply_path = "D:/sfm_dense/street_4_3_3/dense/0/fused_uniformed_aligned_sliced.ply"
-    ply_path = "D:/sfm_dense/street_4_3_3/dense/0/fused_uniformed_aligned_sliced_erosion.ply"
+    # ply_path = "D:/sfm_dense/street_4_3_3/dense/0/fused_uniformed_aligned_sliced_erosion.ply"
     # ply_path = "D:/sfm_dense/street_4_3_3/color_pd30_8bit_small_street_4_3_3.ply"
     # ply_path = "D:\sfm_dense\street_4_3_3\color_pd30_8bit_small_street_4_3_3_ele_uniformed_sliced.ply"
+
+    # street_5_6_1
+    # ply_path = "F:/dt/5_6_1/fused_ele_aligned_sliced_2.ply"
+
 
     # good for crossroads:
     # ply_path = "D:\sfm_dense\street_4_3_3\color_pd30_8bit_small_street_4_3_3_ele_uniformed_sliced_erosion.ply"
 
+    # ply_path = "D:/sfm_dense/5_1_2/dense/0/fused.ply"
+    # ply_path = "D:/sfm_dense/5_2_1/dense/1/fused.ply"
+    # ply_path = "D:/sfm_dense/5_2_3/dense/0/fused.ply"
+    # ply_path = "D:/sfm_dense/5_2_4/dense/0/fused_ele_aligned_sliced.ply"
+    # ply_path = "D:/sfm_dense/5_3_1/dense/0/fused_cut.ply"
+    # ply_path = "D:/sfm_dense/5_6_1/dense/0/fused_cut.ply"
+    # ply_path = "D:/sfm_dense/5_6_2/dense/0/fused_cut.ply"
+    ply_path = "D:/sfm_dense/5_7_2/dense/0/fused.ply"
+
     ply = CustomPLY(ply_path)
-    # ply.move_center()
-    # ply.align_to_z(z_=-1, overwrite=True, preview=False)  # city = 1, sfm = -1
+    ply.move_center()
+    ply.align_to_z(z_=-1, overwrite=True, preview=False)  # city = 1, sfm = -1
     ply.show_range_coords()
     # ply.dataset()
-    # ply.elevation_map(overwrite=True, preview=False)
-    # ply.slice(0.2, overwrite=True, preview=True)
+    ply.elevation_map(overwrite=True, preview=True)
+    ply.slice(0.2, overwrite=True, preview=True)
     # ply.squeeze_to_z()
     # ply.down_sampling(coef=10, overwrite=True, preview=True)  # city = 0.5, sfm = 0.8
 
     # ply.erosion(overwrite=True, preview=True)
     # ply_ero = copy.deepcopy(ply.ply)
     # ply_ero.paint_uniform_color([0, 0.651, 0.929])
-    print()
-    ply.detect_crossroads(preview=True)
-
-    o3d.visualization.draw_geometries(geometry_list=[
-        ply.ply,
-        ply_ero,
-        ply.mesh_frame
-    ],
-        point_show_normal=True
-    )
+    # print()
+    # ply.detect_crossroads(preview=True)
+    #
+    # o3d.visualization.draw_geometries(geometry_list=[
+    #     ply.ply,
+    #     ply_ero,
+    #     ply.mesh_frame
+    # ],
+    #     point_show_normal=True
+    # )
 
     # ply.down_sampling(coef=0.8, overwrite=True, preview=True)  # only for sfm
     # ply.show_range_coords()
     # ply.move_center()
     # ply.show_range_coords()
     # ply.show_range_coords()
-    # ply.save("fused_ele_uniformed_aligned_squeezed.ply")
+    ply.save("fused_ele_aligned_sliced.ply")
