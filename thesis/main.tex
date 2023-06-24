@@ -2,7 +2,7 @@
 %! Date = 09/01/2023
 
 % Preamble
-\documentclass[11pt]{article}
+\documentclass[11pt]{report}
 
 % Packages
 
@@ -12,10 +12,29 @@
 \graphicspath{ {images/} }
 
 \begin{document}
-    \subfile{tex/title}
+    \subfile{title}
 
     \newpage
-    \section{Abstract}
-    \subfile{tex/1_abstract}
+    \tableofcontents
+
+    \newpage
+    \chapter{Abstract}
+    \subfile{1_abstract}
+
+    \newpage
+    \chapter{Background}
+    \subfile{2_background}
+
+    \newpage
+    \chapter{Structure from Motion}
+    \subfile{3_sfm}
+
+    \newpage
+    \chapter{Experiment}
+    \subfile{4_experiment}
+
+    \bibliographystyle{abbrv}
+    \bibliography{bibliography}
+    
 
 \end{document}
