@@ -24,179 +24,22 @@
 
 % Document
 \begin{document}
-    \section{COLMAP}
-    \paragraph{COLMAP} is an open source software, implemented by ~\cite{schoenberger2016sfm} and ~\cite{schoenberger2016mvs},
-    that provides 3D reconstruction based on 2D images. The software comes with graphical user interface and
-    command-line options that let it to be integrated easily with any other projects. It, also, has a great software
-    architecture that makes it a powerful and flexible tool with a wide range of options for customization. COLMAP has
-    shown a superb performance in compare to other SfM softwares, and it is being used widely in industry for
-    core applications such as 3D modeling and robotics.
-
-    \paragraph{Spare and Dense Reconstructions} are both implemented in COLMAP. Sparse reconstruction results in
-    the 3D point cloud of only the detected features, while dense reconstruction refers to the point cloud of all
-    pixels in the input images. Dense reconstrution is achievable after obtaining sparse reconstruction with camera
-    poses. By default, It runs PatchMatch algorithm \cite{journals/tog/BarnesSFG09}, and it is a high time-consuming task.
-    Through our project, sparse reconstruction is only considered.
-
-    \paragraph{Customization} is the most important feature in this project. Each step of SfM pipline can be executed
-    separately. Hence, any other algorithm can be repalced by its defaults. And, any extra steps, like refinements,
-    can be added to the pipeline. Moreover, every single default step has a range of options to change, such as
-    the maximum number of features and matches, thresholds, different camera settings with fixed camera parameters, etc.
-    Here is sample bash code that shows an overview of our customization applied to the feature detection step:
-
-    \begin{lstlisting}[language=bash,caption={colmapsparse.sh},label={lst:lstlisting2}]
-        #!/bin/bash
-
-        colmap feature_extractor \
-           --database_path $DATASET_PATH/database.db \
-           --image_path $DATASET_PATH/images \
-           --SiftExtraction.max_image_size 10000 \
-           --SiftExtraction.max_num_features 20000 \
-           --SiftExtraction.estimate_affine_shape 1 \
-           --ImageReader.single_camera 1 \
-           --ImageReader.camera_model FULL_OPENCV \
-           --ImageReader.camera_params $CALIB_PARAMS_YAML
-    \end{lstlisting}
-
-    \paragraph{In our experiment}, COLMAP is used for 3D reconstruction with different settings. Pixel-Perfect
-    refinement codes are placed between COLMAP pipeline after initial keypoints detection. Also, we will see that
-    by manipulating COLMAP options, it can be used in vSLAM too.
-
-    \newpage
-
-    \section{Data acquisition}
-    \paragraph{GoPro cameras} are small, portable, and captures high quality videos in high frame rates. They also, provide
-    a programming api that makes it super easy to develop applications based the cameras' output. Hence, they
-    are popular in computer vision and robotics researches. In our experiment, the GoPro 9 camera was fixed on
-    a bike, and several videos were taken from the city of Padua, while riding through the streets.
-
-    \paragraph{Our dataset} is created from the two videos captured by the following camera settings:
-
-    \begin{enumerate}
-        \item
-        \begin{itemize}
-            \item 10 minutes, 1080p, 60 frames/sec, Undistorted
-            \item SfM input images are every 10 frames from the video, means 6 images per second
-        \end{itemize}
-        \item
-        \begin{itemize}
-            \item 25 minutes, 2.7k, 60f, wide and distorted
-            \item SfM input images are every 15 frames, 2704×1538 dimensions
-        \end{itemize}
-    \end{enumerate}
-
-    \paragraph{Extra data:} GoPro cameras come with additional information for the captured videos, such as GPS, IMU.
-    https://github.com/gopro/gpmf-parser is the application used to extract these data from video files. Sample GPS
-    data of the first 5 seconds:
-
-    \begin{lstlisting}[language=bash,caption={gpmf-parser output},label={lst:lstlisting}]
-        VIDEO FRAMERATE:
-        59.940 with 31860 frames
-        PAYLOAD TIME:
-          0.000 to 1.001 seconds
-        SCALED DATA:
-          GPS5 45.406deg, 11.877deg, 19.839m, 2.418m/s, 2.450m/s,
-          GPS5 45.406deg, 11.877deg, 19.831m, 2.432m/s, 2.420m/s,
-          GPS5 45.406deg, 11.877deg, 19.816m, 2.489m/s, 2.430m/s,
-          GPS5 45.406deg, 11.877deg, 19.811m, 2.501m/s, 2.490m/s,
-          GPS5 45.406deg, 11.877deg, 19.807m, 2.501m/s, 2.500m/s,
-          GPS5 45.406deg, 11.877deg, 19.821m, 2.495m/s, 2.500m/s,
-          GPS5 45.406deg, 11.877deg, 19.828m, 2.503m/s, 2.500m/s,
-          GPS5 45.406deg, 11.877deg, 19.830m, 2.505m/s, 2.500m/s,
-          GPS5 45.406deg, 11.877deg, 19.825m, 2.520m/s, 2.510m/s,
-          GPS5 45.406deg, 11.877deg, 19.819m, 2.493m/s, 2.520m/s,
-          GPS5 45.406deg, 11.877deg, 19.822m, 2.472m/s, 2.490m/s,
-          GPS5 45.406deg, 11.877deg, 19.820m, 2.471m/s, 2.470m/s,
-          GPS5 45.406deg, 11.877deg, 19.822m, 2.494m/s, 2.470m/s,
-          GPS5 45.406deg, 11.877deg, 19.790m, 2.448m/s, 2.490m/s,
-          GPS5 45.406deg, 11.877deg, 19.775m, 2.444m/s, 2.450m/s,
-          GPS5 45.406deg, 11.877deg, 19.775m, 2.434m/s, 2.440m/s,
-          GPS5 45.406deg, 11.877deg, 19.759m, 2.404m/s, 2.430m/s,
-          GPS5 45.406deg, 11.877deg, 19.763m, 2.412m/s, 2.400m/s,
-        PAYLOAD TIME:
-          1.001 to 2.002 seconds
-        SCALED DATA:
-          GPS5 45.406deg, 11.877deg, 19.763m, 2.411m/s, 2.410m/s,
-          GPS5 45.406deg, 11.877deg, 19.751m, 2.412m/s, 2.410m/s,
-          GPS5 45.406deg, 11.877deg, 19.767m, 2.443m/s, 2.410m/s,
-          GPS5 45.406deg, 11.877deg, 19.749m, 2.455m/s, 2.440m/s,
-          GPS5 45.406deg, 11.877deg, 19.757m, 2.455m/s, 2.460m/s,
-          GPS5 45.406deg, 11.877deg, 19.780m, 2.436m/s, 2.460m/s,
-          GPS5 45.406deg, 11.877deg, 19.796m, 2.448m/s, 2.440m/s,
-          GPS5 45.406deg, 11.877deg, 19.770m, 2.426m/s, 2.450m/s,
-          GPS5 45.406deg, 11.877deg, 19.788m, 2.441m/s, 2.430m/s,
-          GPS5 45.406deg, 11.877deg, 19.794m, 2.462m/s, 2.440m/s,
-          GPS5 45.406deg, 11.877deg, 19.815m, 2.480m/s, 2.460m/s,
-          GPS5 45.406deg, 11.877deg, 19.837m, 2.504m/s, 2.480m/s,
-          GPS5 45.406deg, 11.877deg, 19.859m, 2.523m/s, 2.500m/s,
-          GPS5 45.406deg, 11.877deg, 19.882m, 2.473m/s, 2.520m/s,
-          GPS5 45.406deg, 11.877deg, 19.898m, 2.482m/s, 2.470m/s,
-          GPS5 45.406deg, 11.877deg, 19.899m, 2.484m/s, 2.480m/s,
-          GPS5 45.406deg, 11.877deg, 19.905m, 2.496m/s, 2.480m/s,
-          GPS5 45.406deg, 11.877deg, 19.913m, 2.490m/s, 2.500m/s,
-          GPS5 45.406deg, 11.877deg, 19.915m, 2.517m/s, 2.490m/s,
-        PAYLOAD TIME:
-          2.002 to 3.003 seconds
-    \end{lstlisting}
-
-    We will see initial pose for cameras can boost SfM pipeline enormously. However, GPS data from GoPro cameras
-    are not usable in this process.
-    GPS sampling rate is 18 per second. It means there are 18 position data in one second. However, after reviewing
-    all GPS data for a long video, we realized that the coordinates are updated every 2 or 3 seconds which is not ideal.
-    In SFM, the algorithm finds the coordinates of the camera for each frame. If we want to use GPS data as an initial
-    value in SFM, 40 to 60 frames might have the same initial coordinates which doesn't help the algorithm.
-    Moreover, GPS data from GPMF metadata has an accuracy of three-tenth of a decimal. We checked this error in
-    Google Maps, and the error could be 10 meters. While, SFM has an error of less than a centimeter.
-
-    \paragraph{Reconstruction}: The extracted frames are then grouped into batches and fed into COLMAP SfM pipeline.
-
-    The first dataset is from the undistorted video. For the ease of recalling, we will call this dataset
-    "The First dataset". The first dataset is made from 120 frames with resolution of 1920*1088, and size of ~3MB
-    for each image. The figure \ref{fig:1ply} is the sparse reconstruction obtained by COLMAP:
-
-    \begin{figure}
-    \caption{The First Dataset: Sparse and Dense Point Cloud}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/1.ply.sparse.png}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/1.ply.dense.1.png}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/1.ply.dense.2.png}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/1.ply.dense.3.png}
-    \label{fig:1ply}
-    \end{figure}
-
-    The Second Dataset is from 2.7k video, and contains 175 distorted images. The final point cloud includes
-    100k points. The reconstrution is shown in the figure \ref{fig:2ply}
-
-    \begin{figure}
-    \caption{The Second Dataset: Sparse and Dense Point Cloud}
-    \centering
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/2.ply.sparse.png}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/2.ply.dense.1.png}
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/2.ply.dense.2.png}
-    \label{fig:2ply}
-    \end{figure}
-
-    \section{Refinement}
-    ~\cite{lindenberger2021pixsfm} is described in detail in the previous chapter. Here, we apply this approach to
-    refine our point clouds.
-
-    \section{Compare the results with City point cloud}
-    
-    \section{Calibration and its imapct}
-
-    \section{Real-Time Structure from Motion}
-
     \section{Dataset}
-    1) Aerial Point Cloud: An extensive collection of 3D points is obtained from the city of Padova
+    \paragraph{Aerial Point Cloud:} An extensive collection of 3D points is obtained from the city of Padova
     using an airplane. The covered region spans 1600m by 1000m, and the average nearest neighbor distance
-    of points is 0.63m. The dataset contains a total of 3,583,803 points.
-    2) Ground Point Clouds: 10 dense point clouds are created using the Structure from Motion techniques.
+    of points is 0.63m. The dataset contains a total of 3,583,803 points, figure \ref{fig:ply_aerial_all}.
+    \paragraph{Ground Point Clouds:} 10 dense point clouds are created using the Structure from Motion techniques.
     These datasets are further refined using Pixel-Perfect algorithm. Each dataset comprises an average of
     60 frames extracted from a 30-second undistorted video. The video was recorded at a frame rate of 60 fps,
     resulting in the generation of point clouds at a rate of 2 pictures per second. The resolution of each image
     is 1920*1088 pixels, and the distance covered in each dataset ranges from 80 to 120 meters.
 
-    #TODO: add images
+    \begin{figure}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/experiment/ply_aerial_all}
+    \caption{The aerial point cloud}
+    \label{fig:ply_aerial_all}
+    \end{figure}
 
     \section{Point Cloud Registration}
     The objective is to align the ground point cloud with the aerial point cloud. Initially, we attempted
@@ -213,15 +56,29 @@
         all streets and directions and so more points must be related to the ground plane. Then,
         the rotation matrix between the normal vector of the street plane and the (x=0, y=0, z=1) vector
         is computed and applied to the entire ground point cloud. This step roughly determines the rotation
-        around x and y axes. Here is an elevation map from top point of view aligned with z axis:
-        #TODO: images elevation maps
+        around x and y axes.
 
         \item From the top point of view, It is seen that the most discriminative feature among the datasets
         is the angles of streets and crossroads. So, the data of vertical walls in ground dataset and roofs
         in aerial dataset has no use. Therefore, both point clouds are sliced along the z-axis with a certain
-        threshold, and the half related to the streets is remained. In the examples below, the similarity of
-        both ground and aerial point clouds are
-        #TODO: images
+        threshold, and the half related to the streets is remained. In figure \ref{fig:ply_sliced}, the similarity of
+        both ground and aerial point clouds are visible.
+        \begin{figure}
+            \centering
+            \begin{subfigure}{0.45\textwidth}
+                \centering
+                \includegraphics[width=\linewidth]{images/experiment/ply_sliced_ground}
+                \caption{Ground Point Cloud}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.45\textwidth}
+                \centering
+                \includegraphics[width=\linewidth]{images/experiment/ply_sliced_aerial}
+                \caption{Aerial Point Cloud}
+            \end{subfigure}
+            \caption{Point clouds sliced from the top viewpoint}
+            \label{fig:ply_sliced}
+        \end{figure}
 
         \item Since the generated point clouds has the up-to-scale problem, it is needed to normalize the
         coordinate values across all datasets. This step does not scale the ground point clouds to the actual size
@@ -801,6 +658,237 @@
 
         \caption{Dataset 10}
         \label{fig:res_5_2_3}
+    \end{figure}
+
+    \clearpage
+    \section{Other Approaches}
+    \paragraph{Crossroads detection based on handcrafted methods:}
+    Correspondence-based registration is a method used in global point cloud registrations. If common features
+    could be found, localizing ground point clouds within aerial point clouds would be easier. As it is mentioned
+    before, the only common points between those two point clouds are streets which are not distinctive features.
+    Instead, crossroads are considered more unique. Therefore, we attempted to detect crossroads in both
+    point clouds and directly register them.
+
+    The areas of crossroads are assumed to have more 3D points than the areas of only streets. Because crossroads represent
+    the meeting point of two or more streets. Hence, one approach for crossroads detection is selecting points with
+    a higher density of neighboring points. However, finding appropriate thresholds for density and the radius to
+    select neighboring points were too challenging due to variations in street width, difficulty in distinguishing
+    between flat grounds (e.g., yards and gardens) and streets, and differing 3D point densities in ground point
+    clouds. We tried to simplify the problem using methods such as uniform point distribution and erosion techniques
+    to remove border points while retaining the points related to the center of streets, potentially indicating
+    crossroads. However, none of these methods provided accurate and robust results. Figure \ref{fig:ply_erosion} shows the
+    result of preprocessing methods and Figure \ref{fig:crossroads_det_1} shows the best results of crossroads detection using
+    aforementioned handcrafted methods.
+
+    \begin{figure}
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/ply_erosion_0}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/ply_erosion_1}
+        \end{subfigure}
+        \caption{Left image: before erosion, Right image: after erosion}
+        \label{fig:ply_erosion}
+    \end{figure}
+
+    \begin{figure}
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/experiment/crossroads_det_1}
+    \caption{
+        Left image: the actual point cloud,
+        Right image: the the same point cloud from the same viewpoint with only crossroads points
+    }
+    \label{fig:crossroads_det_1}
+    \end{figure}
+
+    Another idea involved segmenting the initial ground point cloud, which still contains points from buildings
+    and walls, into planes representing the street and multiple building walls. The intersection of at least two building planes
+    and the street plane could potentially be identified as crossroads. However, this approach lacked accuracy and
+    robustness, particularly in open areas with limited walls, as seen in Dataset 10th. Figure \ref{fig:multi_plane_seg} shows
+    the ground point clouds segmented into planes of the street and walls
+
+    \begin{figure}
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/4_1_3_multi_plane}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/multi_plane_2}
+        \end{subfigure}
+        \caption{Ground point clouds segmented into planes of the street and buildings' walls}
+        \label{fig:multi_plane_seg}
+    \end{figure}
+
+    \clearpage
+    \paragraph{Deep Learning based approach:}
+    We also explored a Deep Learning approach, utilizing the binary grid maps introduced earlier, as inputs for a
+    Convolutional Neural Network to classify them as either crossroads or non-crossroads. Figure \ref{fig:ply_ml_dataset}
+    shows a pair of examples of the binary grid maps representing a top-down view of a crossroad and a non-crossroad.
+    The model was trained using a small dataset consisting of 10 inputs containing binary grid maps of both classes
+    from Dataset 1. Then, we applied the trained model to the entire aerial point cloud of Dataset 1 and filtered out
+    points classified as non-crossroads. Figure \ref{fig:multi_plane_seg} illustrates the remaining points identified
+    as crossroads which includes points of the 4 main crossroads out of 5. The results demonstrated excellent performance.
+    However, to ensure robustness, a significantly larger dataset considering the big 1600m*1000m aerial point cloud
+    with approximately 3 million points would be necessary for training.
+
+    \begin{figure}
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/dataset_0}
+            \caption{Random non-crossroads binary grid map}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/dataset_1}
+            \caption{Random crossroads binary grid map}
+        \end{subfigure}
+        \caption{Samples of the CNN inputs}
+        \label{fig:ply_ml_dataset}
+    \end{figure}
+
+    \clearpage
+    \section{Reconstruction Details}
+
+    \paragraph{COLMAP} is an open source software, implemented by ~\cite{schoenberger2016sfm} and ~\cite{schoenberger2016mvs},
+    that provides 3D reconstruction based on 2D images. Spare and Dense Reconstructions are both implemented in COLMAP.
+    Sparse reconstruction results in the 3D point cloud of only the detected features, while dense reconstruction
+    refers to the point cloud of all pixels in the input images. Dense reconstruction is achievable after obtaining
+    sparse reconstruction with camera poses. By default, It runs PatchMatch algorithm \cite{journals/tog/BarnesSFG09}.
+    However, Each step of SfM pipline can be executed separately. Hence, any other algorithm can be replaced by
+    its defaults. And, any extra steps, like refinements, can be added to the pipeline.
+
+    \paragraph{Boosting Reconstruction pipeline:}
+    The process of Structure from Motion is computationally heavy and not suitable for real-time usage,
+    particularly when it comes to dense reconstruction. Table X presents the execution time of the sparse reconstruction
+    for each step of the SfM algorithm running on our datasets.
+
+    As can be seen, bundle adjustment is the bottleneck. During our experiments, we noticed that providing an
+    initial estimation of camera poses can greatly reduce the number of iterations required for bundle adjustment.
+    Hence, we explored the use of existing visual Simultaneous Localization and Mapping (vSLAM) methods to approximate
+    the initial camera poses. The best solution we found that using COLMAP sparse reconstruction with low configuration
+    parameters, such as lower image resolution and limiting the maximum number of keypoints and matches, just to obtain
+    camera poses. Then, COLMAP's sparse reconstruction is re-executing with the initial camera poses and high-quality configuration.
+    This trick reduced the execution time significantly such that a dataset of 300 frames was reconstructed and
+    refined in 6 minutes which means at the rate of 1 frame per second.
+
+    \paragraph{Extra data from GoPro Camera:}
+    GoPro cameras come with additional information for the captured videos, such as GPS, IMU.
+    https://github.com/gopro/gpmf-parser is the software used to extract these data from video files.
+    Here is a sample GPS data of the first 5 seconds:
+
+    \begin{lstlisting}[language=bash,caption={gpmf-parser output},label={lst:lstlisting}]
+        VIDEO FRAMERATE:
+        59.940 with 31860 frames
+        PAYLOAD TIME:
+          0.000 to 1.001 seconds
+        SCALED DATA:
+          GPS5 45.406deg, 11.877deg, 19.839m, 2.418m/s, 2.450m/s,
+          GPS5 45.406deg, 11.877deg, 19.831m, 2.432m/s, 2.420m/s,
+          GPS5 45.406deg, 11.877deg, 19.816m, 2.489m/s, 2.430m/s,
+          GPS5 45.406deg, 11.877deg, 19.811m, 2.501m/s, 2.490m/s,
+          GPS5 45.406deg, 11.877deg, 19.807m, 2.501m/s, 2.500m/s,
+          GPS5 45.406deg, 11.877deg, 19.821m, 2.495m/s, 2.500m/s,
+          GPS5 45.406deg, 11.877deg, 19.828m, 2.503m/s, 2.500m/s,
+          GPS5 45.406deg, 11.877deg, 19.830m, 2.505m/s, 2.500m/s,
+          GPS5 45.406deg, 11.877deg, 19.825m, 2.520m/s, 2.510m/s,
+          GPS5 45.406deg, 11.877deg, 19.819m, 2.493m/s, 2.520m/s,
+          GPS5 45.406deg, 11.877deg, 19.822m, 2.472m/s, 2.490m/s,
+          GPS5 45.406deg, 11.877deg, 19.820m, 2.471m/s, 2.470m/s,
+          GPS5 45.406deg, 11.877deg, 19.822m, 2.494m/s, 2.470m/s,
+          GPS5 45.406deg, 11.877deg, 19.790m, 2.448m/s, 2.490m/s,
+          GPS5 45.406deg, 11.877deg, 19.775m, 2.444m/s, 2.450m/s,
+          GPS5 45.406deg, 11.877deg, 19.775m, 2.434m/s, 2.440m/s,
+          GPS5 45.406deg, 11.877deg, 19.759m, 2.404m/s, 2.430m/s,
+          GPS5 45.406deg, 11.877deg, 19.763m, 2.412m/s, 2.400m/s,
+        PAYLOAD TIME:
+          1.001 to 2.002 seconds
+        SCALED DATA:
+          GPS5 45.406deg, 11.877deg, 19.763m, 2.411m/s, 2.410m/s,
+          GPS5 45.406deg, 11.877deg, 19.751m, 2.412m/s, 2.410m/s,
+          GPS5 45.406deg, 11.877deg, 19.767m, 2.443m/s, 2.410m/s,
+          GPS5 45.406deg, 11.877deg, 19.749m, 2.455m/s, 2.440m/s,
+          GPS5 45.406deg, 11.877deg, 19.757m, 2.455m/s, 2.460m/s,
+          GPS5 45.406deg, 11.877deg, 19.780m, 2.436m/s, 2.460m/s,
+          GPS5 45.406deg, 11.877deg, 19.796m, 2.448m/s, 2.440m/s,
+          GPS5 45.406deg, 11.877deg, 19.770m, 2.426m/s, 2.450m/s,
+          GPS5 45.406deg, 11.877deg, 19.788m, 2.441m/s, 2.430m/s,
+          GPS5 45.406deg, 11.877deg, 19.794m, 2.462m/s, 2.440m/s,
+          GPS5 45.406deg, 11.877deg, 19.815m, 2.480m/s, 2.460m/s,
+          GPS5 45.406deg, 11.877deg, 19.837m, 2.504m/s, 2.480m/s,
+          GPS5 45.406deg, 11.877deg, 19.859m, 2.523m/s, 2.500m/s,
+          GPS5 45.406deg, 11.877deg, 19.882m, 2.473m/s, 2.520m/s,
+          GPS5 45.406deg, 11.877deg, 19.898m, 2.482m/s, 2.470m/s,
+          GPS5 45.406deg, 11.877deg, 19.899m, 2.484m/s, 2.480m/s,
+          GPS5 45.406deg, 11.877deg, 19.905m, 2.496m/s, 2.480m/s,
+          GPS5 45.406deg, 11.877deg, 19.913m, 2.490m/s, 2.500m/s,
+          GPS5 45.406deg, 11.877deg, 19.915m, 2.517m/s, 2.490m/s,
+        PAYLOAD TIME:
+          2.002 to 3.003 seconds
+    \end{lstlisting}
+
+    We saw that initial camera poses can boost SfM pipeline enormously. However, GPS data from GoPro cameras
+    are not usable in this process.
+    GPS sampling rate is 18 per second. It means there are 18 position data in one second. However, after reviewing
+    all GPS data for a long video, we realized that the coordinates are updated every 2 or 3 seconds which is not ideal.
+    In SFM, the algorithm finds the coordinates of the camera for each frame. If we want to use GPS data as an initial
+    value in SFM, 40 to 60 frames might have the same initial coordinates which doesn't help the algorithm.
+    Moreover, GPS data from GPMF metadata has an accuracy of three-tenth of a decimal. We checked this error in
+    Google Maps, and the error could be 10 meters. While, SFM has an error of less than a centimeter.
+
+    \paragraph{Calibration and its impact}
+    One of the case studies if giving wider distorted images with manual calibration parameters to the SfM pipeline
+    could enhance the accuracy and increase the number of generated point clouds of a wider field of view. We used
+    the camera with 2.7k resolution, 60fps, and wide and distorted settings. The camera was calibrated using the
+    checkerboard method. Figure \ref{fig:img_distorted} demonstrates an example of undistortion of video frame,
+    and Figure X illustrates the resulting sparse point cloud.
+    The generated point cloud has notable error in the street angles, meaning that, from top point of view, the
+    walls should be perpendicular to each other. However, Figure \ref{fig:ply_distorted} displays an angle that is less than 90 degrees,
+    and the points associated with a ground truth plane are excessively spread out from the generated plane.
+    Furthermore, the execution time experienced an exponential increase. For instance, it took approximately
+    10 minutes to construct sparse point cloud from the undistorted frames shown in Figure \ref{fig:ply_distorted}
+    ,whereas the same procedure for the distorted frames required over 2 hours.
+
+    \begin{figure}
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/img_distorted}
+            \caption{Distorted frame}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/img_undistorted}
+            \caption{Corrected image using calibration parameters}
+        \end{subfigure}
+        \caption{Samples of distorted and undistorted video frames}
+        \label{fig:img_distorted}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/ply_distorted}
+            \caption{Point cloud generated from distorted frame from top viewpoint}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/experiment/ply_undistorted}
+            \caption{Point cloud generated from undistorted frame from top viewpoint}
+        \end{subfigure}
+        \caption{Point clouds generated from distorted and undistorted video frames}
+        \label{fig:ply_distorted}
     \end{figure}
 
 
