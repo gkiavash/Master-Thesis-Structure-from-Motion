@@ -15,9 +15,9 @@
     as it is the base algorithm for most papers in these criteria.
 
     \begin{figure}
-    \caption{Structure from Motion Revistied}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/sfm.png}
+    \caption{Structure from Motion Revistied}
     \end{figure}
 
     The algorithm can be viewed as a pipeline that contains the following separated steps:
@@ -29,22 +29,22 @@
         the images. The algorithm, then, matches these features between different input frames. This step is one
         of the most challenging parts in SfM. Occlusion, illumination changes, perspective transformation, and moving objects
         are some of them. However, since this is a core task in many Computer Vision tasks, there has been
-        tons of researches in feature detection and matching, including deep based approaches. SIFT, SuperPoint,
-        S2-Net, R2D2 are often used among SfM related papers.
+        tons of researches in feature detection and matching, including deep based approaches. SIFT (\cite{lowe1999object}), SuperPoint (\cite{detone2018superpoint}),
+        D2-Net (\cite{dusmanu2019d2net}), R2D2 (\cite{revaud2019r2d2}) are often used among SfM related papers.
 
         \item \textbf{Geometric Verification:} raw matches are not enough for the scene reconstruction.
         Matches in similar repeated patterns, multiple objects in one image, etc, are some issues that may cause wrong
-        poses and 3D points. Outliers must be removed from the list of matches. Therefore, by using RANSAC and epipolar
-        geometry, camera matrices, i.e. homography(H), Essential(E), and Fundamental(F) matrices, can be calculated
-        to verify the geometric consistency of the reconstructed 3D points and camera poses.
-        Without geometric verification, the reconstructed 3D model may contain errors that can lead to incorrect result.
+        poses and 3D points. So, Outliers must be removed from the list of matches. By using the existing matches,
+        epipolar geometry and camera matrices(i.e. H, F, and E matrices) are calculated.
+        Then, the rest of matches are verified by checking the geometric consistency of the reconstructed 3D points and
+        camera poses. otherwise, they are filtered out.
+        Without geometric verification, the reconstructed 3D model may contain errors that lead to incorrect result.
 
         \item \textbf{Reconstruction Initialization:} If the pipeline is considered as an iterative or sequential process,
-        a starting point is essential. Choosing a good initial pair of images is, also, so important. At the end of
-        each iteration, the camera parameters and 3D structure are optimized, i.e. the differences between
-        the observed 2D features and the projected 3D points are minimized. Without a good initial estimate,
+        a starting point is essential. Choosing a good initial pair of images is, so important. At the end of
+        each iteration, the camera parameters and 3D structure are optimized. Without a good initial estimate,
         the optimization process usually doesn't converge and stuck in local minima. A good initial pair can be
-        chosen from the top of list of images that are sorted based on the number of correspondences matches.
+        chosen usually from the top of the list of images that are sorted based on the number of correspondences matches.
 
         \item \textbf{Image Registration and Triangulation:} After initialization, the algorithm uses triangulation to estimate
         the 3D position of the matched features in every new image. Triangulation involves finding the intersection point
@@ -52,7 +52,7 @@
         point represents the 3D position of the feature in the scene.
 
         \item \textbf{Bundle Adjustment:} As the previous processes involve some errors, there may be inconsistencies
-        or misalignment between the estimated camera parameters and the triangulated 3D points, and it could get worse
+        or misalignment between the estimated camera parameters and the triangulated 3D points, and since the algorithm is incremental, it could get worse
         and worse for every new image. Bundle adjustment refines those parameters by rewriting the non-linear
         reprojection equations which contain camera poses' matrices, calibration parameters, and, 3D points positions.
         It typically uses an optimization algorithm such as Levenberg-Marquardt to minimize
@@ -66,57 +66,57 @@
     \section{Related Works}
     Structure of Motion is a core task for many projects. It gives the ability to obtain detailed 3D models
     of the environment from 2D images or video sequences. This information can be used widely in many other
-    low level tasks like object tracking, object detection, and also, understanding the scene and detecting speed and
+    tasks like object tracking, object detection, and also, understanding the scene and detecting speed and
     positions of objects for autonomous driving as a high level tasks. Therefore, the accuracy and the speed
-    of the algorithm is crucial. As an example for accuracy, a tiny error, e.g. 1 degree, in the rotation of
-    a camera could cause several meters misalignment in the coordinates of the points especially in open scenes.
+    of the algorithm is crucial. For instance, even a minor rotation error of 1 degree in the camera can lead
+    to significant misalignment of point coordinates, particularly in open scenes, resulting in several meters of discrepancy.
     Therefore, over the past few decades, there has been lots of efforts to improve each part of these algorithms.
     Here is a review of the recent best papers in this area:
 
     \newpage
     \subsection{Researches in Feature Matching}
-    Each paper usually focuses on one or two tasks in the SfM pipeline. The first step, feature matching,
+    The first step in SfM pipeline is feature matching which
     is one of core tasks in many Computer Vision applications as they are used to identify the corresponding
     matches among the input images. Some of the chanllenges are deformation in different viewpoints, occlusion,
-    illumination changes, moving objects, etc. Because of that, there has been tons of reasearches in this area.
+    illumination changes, moving objects, etc. There has been tons of reasearches in this area:
 
-    \paragraph{~\cite{Dusmanu2020Multi}} tracks each keypoint in all input images, and creates a tentative
+    \paragraph{Multi-View Optimization of Local Feature Geometry} (~\cite{Dusmanu2020Multi}) refines the exsiting keypoints. It tracks each keypoint in all input images, and creates a tentative
     matches graph with keypoints as nodes and matches as edges. Each keypoint is known by its surrounding pixels
-    information. So, a h*w patch is selected around the feature and a d dimensional descriptor id calculated by
-    a neural network with Siamese architecture. Then, for each pixel, a dot product similarity is caluclulated
-    with every pixel in the other patch (h*w*h*w dimension). After normalization, a translation vector ($T_{u->v}$)
-    is obtained which refines the position of keypoint by using a correlation layer as regression. Next, as each
-    keypoint could be seen in multiple images,
-    a single incorrect match or displacement can cause cascade of errors in the results. Therefore, another
-    refinement is also applied to the track of each keypoint detected in multiple images. For each track,
-    a non-linear equation for minimizing dot similarity between patches is optimized. The idea of this paper
-    is also used in \cite{lindenberger2021pixsfm} which will be described in detail in the next chapter.
+    information. So, a h*w patch is selected around the feature and a "d" dimensional descriptor is calculated by
+    a neural network with Siamese architecture. Then, for each pixel, a dot product similarity is calculated
+    with every pixel in the other patch (h*w*h*w dimension). After normalization, the pixel that has the most
+    similarity value with keypoint is supposed to be selected, and the translation vector ($T_{u->v}$)
+    moves the keypoint to the selected pixel. In the next stage, since each keypoint could be seen in multiple images,
+    a single incorrect match or displacement can cause cascade of errors in the results. Therefore, for each track of
+    matches, a non-linear equation for minimizing the dot similarity between patches among all patches for the same
+    keypoint is optimized. The idea of this paper is also used in \cite{lindenberger2021pixsfm} which will be
+    described in detail in the next chapter.
 
     \begin{figure}
-    \caption{Paper: Multi-View Optimization of Local Feature Geometry}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/dusmano.jpg}
+    \caption{Paper: Multi-View Optimization of Local Feature Geometry}
     \end{figure}
 
-    \paragraph{~\cite{wang2021deep}} uses optical flow to predict dense correspondences between two frames. The method is
-    able to find more and better matching points and therefore more accurate poses and depth maps, especially for
-    textureless and occluded areas. They use DICLFlow, explained in \cite{wang2020displacement} to generate
-    dense matching points between two consecutive frames. \cite{wang2020displacement} uses a displacement invariant matching
-    cost learning strategy and a soft-argmin projection layer to ensure that the network learns dense matching
-    points rather than image-flow regression. Noisiy matches like moving
-    objects are filtered out by the means of SIFT features. After calclulating the essential matrix , using
-    the classic five-point algorithm with RANSAC scheme, and the dense matching points from optical flow estimation,
+    \paragraph{Deep Two-View Structure-from-Motion Revisited} (~\cite{wang2021deep}) uses optical flow to predict
+    dense matches between two frames. They use DICLFlow, explained in \cite{wang2020displacement} to generate
+    dense matching points between two consecutive frames. Before calculating the essential matrix, noisy matches
+    like moving objects are filtered out. They assumed that optical flow is more accurate in rich textured areas.
+    So, they used SIFT method to detect less textured area in order to mask out the optical flow there.
+    Then, the essential matrix is calculated using the classic five-point algorithm with RANSAC, and
     the dense depth map is computed by performing triangulation. Before this process, the matching is performed
-    again by constraining the search space to epipolar lines computed from the relative camera poses. They filtered
-    out noisy matches twice which means dense matches by optical flow are too noisy. High number of matches is good
+    for the second time by constraining the search space to epipolar lines computed from the relative camera poses.
+    They filtered out noisy matches twice which means dense matches by optical flow are too noisy. High number of matches is good
     for obtaining more points in sparse reconstruction. However, they tend to be noisy. They also,
     introduced a Scale-Invariant Depth Module to deal with the up-to-scale relative pose and mismatch between the
-    scale of the camera motion and the scale of the depth map. Up to scale problem means that while the
-    relative positions of the reconstructed points are accurate, their absolute positions in the real world
+    scale of the camera poses and the depth map. Up to scale problem means that while the
+    relative positions of the reconstructed points are correct, their absolute positions in the real world
     are not known unless there is additional information, such as the size of an object in the scene or the
-    distance between two known points. In order to deal with this problem, this paper generates a number of matching
-    candidates with different depths with the same distance. And thn, a plane-sweep powered network minimize
-    the loss function which is the position displacement of the features in the flow.
+    distance between two known points. In order to deal with this problem, in each pair of images, this paper
+    generates a number of matching candidates with different real world depths with the same interval per keypoint.
+    And then, a plane-sweep powered network minimize the loss function which is the position displacement of
+    the features in the flow. This paper is able to find more and better matching points and therefore more
+    accurate poses and depth maps, especially for textureless and occluded areas.
 
     \begin{figure}
     \caption{Paper: Deep Two-View Structure-from-Motion Revisited}
@@ -124,37 +124,33 @@
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/deep_two_sfm.jpg}
     \end{figure}
 
-    \paragraph{} There are more researches in feature matching step, \cite{revaud2019r2d2} introduced a deep based feature
-    detector that is trained with self-supervision, and simultaneously outputs sparse, repeatable and reliable
-    keypoints that outperforms handcrafted detectors and descriptor.
-    \cite{dusmanu2019d2net} is another deep based approach to feature matching that showed great performance.
-    \cite{detone2018superpoint} is a self-supervised framework that can adapt itself to homography challenges
-    and multi-scale problems.
+    \paragraph{} There are much more researches in feature matching step. \cite{revaud2019r2d2}, \cite{dusmanu2019d2net},
+    and \cite{detone2018superpoint} are supervised deep learning based feature extractors that not only have
+    outperformed handcrafted methods in terms of accuracy, but also, could solve many challenges in this area like
+    point of view challenges and multi-scale problems. Supervised learning means that the model has been trained
+    based on the keypoints defined in training dataset. Their problem is that they have less performance for features other
+    than in training dataset. Some of these papers have provided modules to train the model on your own customised features dataset
 
     \newpage
     \subsection{Researches in Bundle Adjustment}
-    Bundle Adjustment algorithms optimizes the camera parameters and the output points by minimizing the
+    Bundle Adjustment algorithms optimize the camera parameters and the position of 3D points by minimizing the
     difference between the observed image points and the corresponding projected 3D points. However, there
     are some disadvantages with this technique. Bundle Adjustment requires solving a large system of
     non-linear equations, which can be computationally expensive, especially for large datasets. This can be a
-    significant drawback, especially when processing real-time data. It can be sensitive to the initial values.
-    If the initial values are not accurate, the optimization may fail to converge. The optimization problem can have
-    many local minima which means high probability in resulting in suboptimal or incorrect results. Also, inaccurate
-    optimization can increase the error exponentially in the subsequent iterations. In the next chapter, it will be
-    shown that the most time-consuming part in Structure from Motion is this step.
+    significant drawback. In the experiment chapter, it will be shown that the most time-consuming part in Structure from Motion is this step.
+    Also, It is sensitive to the initial values. If the initial values are not accurate, the optimization may fail to converge.
+    The optimization problem can have many local minima which means high probability that it may converge to incorrect results.
+    Also, inaccurate optimization can increase the error exponentially in the subsequent iterations.
 
-    ~\cite{tang2019banet} mainly focuses on bundle adjustment step in SfM pipeline. They implemented feature-metric
+    \paragraph{BA-Net: Dense Bundle Adjustment Network} (~\cite{tang2019banet}) implemented feature-metric
     bundle adjustment that minimizes feature-metric errors between feature pyramid of images obtained by CNNs.
     As \cite{LSDSLAM} says, there are two types of BAs:
-    - Typical geometric BA with re-projection error(pixel coordinates): Only a few pixels, i.e. keypoints, are
-    taken into account which comes with keypoints detection and matching challenges
-    - Photometric BA algorithm(all aligned pixel, pixel intensities as error): It has good accuracy,
-    especially at less textured scenes. However, the disadvantages would be sensitivity to camera exposure,
-    illumination changes, and outliers such as moving objects. Also, considering all pixels would increase
-    the computation dramatically.
-    BA-Net creates a pyramid of features for each image and align them. The featire pyramid is generated by
-    multi-scale hierarchy of CNN(DRM-54, \cite{yu2017dilated}) to construct feature pyramids. Then, the BA equation
-    to minimize would be:
+    \begin{enumerate}
+        \item Typical geometric BA with re-projection error(pixel coordinates): Only a few pixels, i.e. keypoints, are taken into account which comes with keypoints detection and matching challenges
+        \item Photometric BA algorithm(all aligned pixel, pixel intensities as error): It has good accuracy, especially at less textured scenes. However, the disadvantages would be sensitivity to camera exposure, illumination changes, and outliers such as moving objects. Also, considering all pixels would increase the computation dramatically.
+    \end{enumerate}
+    BA-Net creates a pyramid of features for each image and align them. The feature pyramid is generated by
+    multi-scale hierarchy of CNN(DRM-54, \cite{yu2017dilated}). Then, the BA equation to minimize would be:
     \[ e^f_{i,j}(X) &= F_{i}(\pi(T_{i},d_{j} \cdot q_{j}))-F_{1}(q_{j}) \]
     where $F = {F_{i} | i = 1 to N_{i}}$ are the feature pyramids of images $I = {I_{i} | i = 1 to N_{i}}$.
 

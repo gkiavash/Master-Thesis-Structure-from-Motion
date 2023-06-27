@@ -9,6 +9,8 @@
 \usepackage{lipsum}
 \usepackage{wasysym}
 \usepackage{subcaption}
+\usepackage{adjustbox}
+\usepackage{multirow}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
@@ -768,8 +770,26 @@
 
     \paragraph{Boosting Reconstruction pipeline:}
     The process of Structure from Motion is computationally heavy and not suitable for real-time usage,
-    particularly when it comes to dense reconstruction. Table X presents the execution time of the sparse reconstruction
+    particularly when it comes to dense reconstruction. Table \ref{tab:exe_time} presents the execution time of the sparse reconstruction
     for each step of the SfM algorithm running on our datasets.
+    \begin{table}[htb]
+        \centering
+        \begin{adjustbox}{max width=\textwidth}
+            \begin{tabular}{|c|c|c|c|c|c|c|}
+                \hline
+                 Steps:                 & Max num of features & Feature Extraction & Feature Matching & Bundle Adjustment & total    \\
+                \hline
+                300 frames(1080p)       & 30000               & 0.85mins           & 1.01mins          & 21.5mins          & 23.36mins \\
+                \hline
+                300 frames              & 5000                & 0.15mins           & 0.23mins          & 6.74mins          & 7.12mins \\
+                \hline
+                300 frames(Known poses) & 30000               & 0.73mins           & 1.05mins          & 1.65mins          & 3.43mins \\
+                \hline
+            \end{tabular}
+        \end{adjustbox}
+        \caption{The execution time of the sparse reconstruction for each step of the SfM algorithm using Nvidia Rtx3090 graphics}
+        \label{tab:exe_time}
+    \end{table}
 
     As can be seen, bundle adjustment is the bottleneck. During our experiments, we noticed that providing an
     initial estimation of camera poses can greatly reduce the number of iterations required for bundle adjustment.
@@ -777,8 +797,7 @@
     the initial camera poses. The best solution we found that using COLMAP sparse reconstruction with low configuration
     parameters, such as lower image resolution and limiting the maximum number of keypoints and matches, just to obtain
     camera poses. Then, COLMAP's sparse reconstruction is re-executing with the initial camera poses and high-quality configuration.
-    This trick reduced the execution time significantly such that a dataset of 300 frames was reconstructed and
-    refined in 6 minutes which means at the rate of 1 frame per second.
+    This trick reduced the execution time significantly such that a dataset of 300 frames was reconstructed in 10 minutes.
 
     \paragraph{Extra data from GoPro Camera:}
     GoPro cameras come with additional information for the captured videos, such as GPS, IMU.
@@ -845,17 +864,17 @@
     Google Maps, and the error could be 10 meters. While, SFM has an error of less than a centimeter.
 
     \paragraph{Calibration and its impact}
-    One of the case studies if giving wider distorted images with manual calibration parameters to the SfM pipeline
+    One of the case studies is if giving wider distorted images with manual calibration parameters to the SfM pipeline
     could enhance the accuracy and increase the number of generated point clouds of a wider field of view. We used
     the camera with 2.7k resolution, 60fps, and wide and distorted settings. The camera was calibrated using the
     checkerboard method. Figure \ref{fig:img_distorted} demonstrates an example of undistortion of video frame,
-    and Figure X illustrates the resulting sparse point cloud.
+    and Figure \ref{fig:ply_distorted} illustrates the resulting sparse point cloud.
     The generated point cloud has notable error in the street angles, meaning that, from top point of view, the
-    walls should be perpendicular to each other. However, Figure \ref{fig:ply_distorted} displays an angle that is less than 90 degrees,
+    streets should be perpendicular to each other. However, Figure \ref{fig:ply_distorted} displays an angle that is less than 90 degrees,
     and the points associated with a ground truth plane are excessively spread out from the generated plane.
     Furthermore, the execution time experienced an exponential increase. For instance, it took approximately
     10 minutes to construct sparse point cloud from the undistorted frames shown in Figure \ref{fig:ply_distorted}
-    ,whereas the same procedure for the distorted frames required over 2 hours.
+    , whereas the same procedure for the distorted frames required over 2 hours.
 
     \begin{figure}
         \centering
@@ -879,15 +898,15 @@
         \begin{subfigure}{0.45\textwidth}
             \centering
             \includegraphics[width=\linewidth]{images/experiment/ply_distorted}
-            \caption{Point cloud generated from distorted frame from top viewpoint}
+            \caption{From distorted frame}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.45\textwidth}
             \centering
             \includegraphics[width=\linewidth]{images/experiment/ply_undistorted}
-            \caption{Point cloud generated from undistorted frame from top viewpoint}
+            \caption{From undistorted frame}
         \end{subfigure}
-        \caption{Point clouds generated from distorted and undistorted video frames}
+        \caption{Point clouds generated from distorted and undistorted video frames from top point of view}
         \label{fig:ply_distorted}
     \end{figure}
 

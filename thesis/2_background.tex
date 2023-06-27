@@ -33,9 +33,9 @@
     Extrinsic parameters describe how the camera is positioned and oriented in relation to the real world frame.
     The translation \mathbf{t} and rotation \mathbf{R} matrices, and scaling of the camera are some of these parameters.
 
-    a 3D point, is projected onto the image plane, by transforming the point from world coordinate ($X_{w}, Y_{w}, Z_{w}$)system to
+    a 3D point, is projected onto the image plane, by transforming the point from world coordinate ($X_{w}, Y_{w}, Z_{w}$) system to
     the camera coordinate system using the extrinsic parameters (Rotation \mathbf{R} and Translation \mathbf{t} matrices).
-    After having the coordinates of the 3D point from the center of the camera, using the intrinsic parameters
+    After having the coordinates of the 3D point from the center of the camera, i.e. ($X_{p}, Y_{p}, Z_{p}$), using the intrinsic parameters
     of the camera, the point is projected onto the image plane. This transformation from world frame to image plane
     is encapsulated in projection matrix.
 
@@ -133,9 +133,11 @@
         \right]
     \]
 
-    Finally, the point P is transformed to u by:
+    Finally, the point P in real world coordinates system is transformed to image plane, u, by:
     \[ u &= K[R|t]P \]
 
+    As it can be seen from the equations, the depth (Z) of the real world points are vanished during the projection.
+    In the next sections, we will see how to recover the depth.
 
 
     \section{Stereo Cameras}
@@ -145,20 +147,30 @@
     the position and orientation of one camera in relation to the other, and a known internal calibration
     (i.e., focal length, principle point).
 
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/epipolar_1.png}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/epipolar_1.png}
+        \caption{Stereo Cameras}
+        \label{fig:stereo_cameras}
+    \end{figure}
 
 
     \paragraph{Epipolar lines:} Epipolar line is the intersection of the image planes with a plane that
     passes through the two camera centers and a 3D point in the scene. Any point in one image must lie on
-    the epipolar line for its equivalent point in the other image. In the picture above l and l' are the epipolar lines.
+    the epipolar line for its equivalent point in the other image. In the figure \ref{fig:stereo_cameras}, l and l' are the epipolar lines.
 
     \paragraph{Epipoles:} The epipole is the location where the picture planes of the two cameras are
     intersected by the baseline, which connects the centers of the two cameras. To put it another way,
     each camera perceives the epipole of the other camera as a projection of the other camera's center.
     
-    \paragraph{Essential Matrix:} A 3x3 matrix that relates two cameras' poses of two viewpoints. It encodes,
-    the relative position and orientation of the two cameras in relation to one another. Recalling translation (t)
-    and rotation (R) matrices, Essential matrix is:
+    \paragraph{Essential Matrix:} Let  $\tilde{p}_l$ and $\tilde{p}_r$ be the vectors from the center of cameras to the points p and p' from figure \ref{fig:stereo_cameras}.
+    Recalling translation (t) and rotation (R) matrices, $(t \times R\tilde{p}_r)$  is the cross product vector which is orthogonal to the epipolar plane. Hence,
+    \[
+        \tilde{p}_l \cdot (t \times R\tilde{p}_r) = 0
+    \]
+
+    Essential matrix is a 3x3 matrix that relates two cameras' poses of two viewpoints. It encodes,
+    the relative position and orientation of the two cameras in relation to one another:
     \[
         [t]_{\times} &=
         \left[
@@ -172,7 +184,7 @@
 
     \[ E &= R[t]_{\times} \]
 
-    For two identical points p in the first image and p' in the second image, the following equation holds:
+    In figure \ref{fig:stereo_cameras}, for the two points p in the first image and p' in the second image representing the same 3D point P, the following equation holds:
     \[ p \times E \times p' &= 0 \]
 
     By having the linear equation above for a set of corresponded points between two images, essential matrix
@@ -190,41 +202,45 @@
 
     \section{Two View Geometry}
 
-    \paragraph{Two-view geometry} is the task of finding the of the relation between two images captured from the same scene
+    \paragraph{Two-view geometry} is the task of finding the relation between two images captured from the same scene
     by two cameras with different viewpoints, and detecting the 3D position of points in the scene. We start by
     detecting the depth of a pixel with basic geometry calculus, and then, generalize it to all possible camera settings.
 
     \paragraph{Rectilinear Rig} Starting with two cameras with the same intrinsic parameters with parallel baseline, i.e. the planes of
-    two cameras are aligned in one line as shown in the following picture, By using similar triangles equations,
+    two cameras are aligned in one line as shown in figure \ref{fig:rect_rig}, By using similar triangles equations,
     the depth of a keypoint can be calculated:
 
-    \[ \includegraphics[scale=0.5]{images/two_view.jpg} \]
+    \begin{figure}
+        \centering
+        \includegraphics[scale=0.5]{images/two_view}
+        \caption{Rectilinear Rig}
+        \label{fig:rect_rig}
+    \end{figure}
 
     \[ x'_{c} &= f\frac{X}{Z} \quad,\quad x_{c} &= f\frac{X+B}{Z} \]
     \[ d &= x_{c} - x'_{c} &= \frac{fB}{Z} \]
     \[ Z &= \frac{fB}{d} \]
 
-    Let disparity be the difference in the coordinates of a pixel in the two images. Here, the only challenge is to
-    find the disparity of each pixel.
+    Let d, from the equation above, called the disparity which is the difference in the coordinates of the pixels in the two images pointing to the same 3D point.
+    Therefore, the only challenge is to find the disparity of each pixel.
 
     \paragraph{For other camera settings}, e.g. non-parallel baselines, different camera parameters,
-    The fundamental matrix is the key option that can be used to find the depth of points.
+    the fundamental matrix is the key option that can be used to find the depth of points.
     A 3D point can be defined as the intersection of the rays that start from the centers of cameras and
-    cross corresponded keypoints in each image plane. Recalling the epipolar geometry picture above, the epipolar
+    cross the corresponded 2D keypoints in each image plane. Recalling figure \ref{fig:stereo_cameras}, the epipolar
     line and the vector that starts from the center of the camera and ends in the point p are perpendicular to
     each other, meaning $p^{T} \cdot l &= 0$ and $p'^{T} \cdot l' &= 0$ . So, by having the epipolar line, the
-    position of the 3D point can be caluclulated. This process is also known as triangulation.
+    position of the 3D point can be caluclulated.
 
     In practice, first, the essential matrix is calculated by finding the accurate feature matches between
-    the two images. Then, for dense reconstruction, a corresponding pixel from the other image is found for
-    each pixel along the epipolar lines. The epipolar lines help to limit the search space for matching features between the two images
-    from pixels in all over the images to the epipolar line and its surroundings. By having camera poses and all
-    matches, 3D points could be obtained by triangulation.
+    the two images. Then, for each pixel, the corresponding pixel from the other image is found along the epipolar lines.
+    The epipolar lines help to limit the search space for matching process from all pixels over the images to the pixels
+    on epipolar line and its surroundings. By having camera poses and all matches, 3D points could be obtained by triangulation.
 
     \section{Camera Distortion and Calibration}
 
     \paragraph{Distortion} refers to the deviation between the ideal pinhole camera model and the actual camera
-    used to capture images. The pinhole camera model assumes that light rays pass through a single point, or
+    used to capture images. The pinhole camera model assumes that light rays pass through a sinfvgle point, or
     the pinhole, before forming an image on a flat image plane. However, real-world cameras have imperfect
     lenses, that doesn't let rays reflect straightly and causes distortions to the image.
 
