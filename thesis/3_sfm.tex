@@ -79,7 +79,7 @@
     matches among the input images. Some of the chanllenges are deformation in different viewpoints, occlusion,
     illumination changes, moving objects, etc. There has been tons of reasearches in this area:
 
-    \paragraph{Multi-View Optimization of Local Feature Geometry} (~\cite{Dusmanu2020Multi}) refines the exsiting keypoints. It tracks each keypoint in all input images, and creates a tentative
+    \paragraph{Multi-View Optimization of Local Feature Geometry} (~\cite{Dusmanu2020Multi}) refines the existing keypoints. It tracks each keypoint in all input images, and creates a tentative
     matches graph with keypoints as nodes and matches as edges. Each keypoint is known by its surrounding pixels
     information. So, a h*w patch is selected around the feature and a "d" dimensional descriptor is calculated by
     a neural network with Siamese architecture. Then, for each pixel, a dot product similarity is calculated
