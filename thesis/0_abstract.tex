@@ -6,25 +6,18 @@
 
 % Document
 \begin{document}
-
-3D data processing has become a prominent topic in Computer Vision nowadays.
-One of the major areas of study in this field is Structure from motion (SfM)
-which performs recovering the 3D structure of a scene and the pose of the
-cameras from a set of 2D images taken from different viewpoints.
-
-SfM algorithms can be used in a variety of applications, such as 3D modeling,
-augmented reality, and autonomous driving.
-Also, they can be used along with other computer vision techniques, like
-object recognition and segmentation, in order to improve the analysis of the 3D structure.
-
-Several different algorithms have been presented for this problem.
-However, in general, most of them follow the same procedure.
-The task of Structure from Motion consists of 5 general steps:
-Feature detection and Feature matching, Camera pose estimation, Structure estimation, and Cumulative Error Reduction.
-
-Recent papers have shown great refinement in all these steps.
-In this paper, we will review these approaches, apply the SfM algorithm to an urban
-dataset consisting of consecutive video frames, and then use the best paper to refine the result.
-We will also investigate the effects of distortion and calibration of the camera in SfM's pipeline.
+    \begin{abstract}
+        Structure from Motion (SfM), which performs recovering 3D scene structure and camera poses from 2D images
+        or video frames, has become a prominent topic in 3D Computer Vision. SfM has applications in various areas
+        such as 3D modeling, augmented reality, robotics, and autonomous systems. Recent researches have made
+        significant improvements in the accuracy and the challenges associated with SfM. This thesis reviews
+        and compares state-of-the-art approaches with an especial focus on
+        "Pixel-Perfect Structure-from-Motion with Featuremetric Refinement" paper. In our experiment, videos from
+        the city of Padova were captured using a bike-mounted camera and processed through the SfM algorithm.
+        The generated point clouds are refined and re-evaluated by the aforementioned paper. Next, an algorithm is
+        developed to localize the generated point clouds in an extensive point cloud dataset of the whole city,
+        acquired by an airplane. This thesis demonstrates promising results in localization by generating accurate
+        and sufficient point clouds from streets using images and video frames.
+    \end{abstract}
 
 \end{document}

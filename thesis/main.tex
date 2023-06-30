@@ -5,6 +5,18 @@
 \documentclass[11pt]{report}
 
 % Packages
+% Packages
+\usepackage{amsmath}
+\usepackage{lipsum}
+\usepackage{wasysym}
+\usepackage{subcaption}
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{pgfplots}
 
 \input{base/packages}
 \input{base/commands}
@@ -14,7 +26,7 @@
 \begin{document}
     \subfile{title}
     \newpage
-    \chapter{Abstract}
+
     \subfile{0_abstract}
 
     \newpage
@@ -22,19 +34,27 @@
 
     \newpage
     \chapter{Introduction}
-    \subfile{1_intro
+    \subfile{1_intro}
 
     \newpage
     \chapter{Background}
+    \label{chap:background}
     \subfile{2_background}
 
     \newpage
     \chapter{Structure from Motion}
+    \label{chap:sfm}
     \subfile{3_sfm}
 
     \newpage
     \chapter{Experiment}
+    \label{chap:experiment}
     \subfile{4_experiment}
+
+    \newpage
+    \chapter{Conclusion}
+    \label{chap:conclusion}
+    \subfile{5_conclusion}
 
     \bibliographystyle{abbrv}
     \bibliography{bibliography}

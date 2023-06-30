@@ -13,33 +13,56 @@
     a set of 2D images or video frames.
     It is a fundamental tool in many 3D Computer Vision applications such as 3D modeling, augmented reality,
     Robotics and Autonomous Systems.
-    Several algorithms have been presented for this problem. However, in general, most of them follow the same procedure.
+    Several algorithms have been presented in this area. However, in general, most of them follow the same procedure.
     The incremental Structure from Motion algorithm, \cite{schoenberger2016sfm}, consists of the following major steps.
-    For every new image:
-    Feature detection and Feature matching in 2D images,
-    Camera pose estimation based on the matches,
-    3D points extraction by triangulation,
-    and refinement known as bundle adjustment.
+    For every new image: - Feature detection and matching, i.e. identifying distinctive features and finding the
+    correspondings in the previous images - Camera pose estimation using epipolar geometry - 3D point extraction
+    by triangulation - and finally Bundle adjustment, i.e. optimizing the camera poses and 3D point positions by
+    minimizing the reprojection error. (See Chapter \ref{chap:sfm})
 
-    Since the algorithm is iterative, errors will be cascaded for every new image, and so, it may
-    cause an exponential growth in the overall error. Sometimes, it fails and stops registering any new image,
-    and the results converge to a complete wrong 3D scene. Therefore, accuracy and robustness of each part of
+    Since the algorithm is incremental and iterative, errors will be cascaded for every new input, and so, there would be
+    an exponential growth in the overall error. Sometimes, it, even, fails and stops registering new image,
+    and the results converge to a complete wrong 3D scene. Therefore, accuracy and robustness of each step of
     the algorithm is crucial.
 
-    Some of the key challenges in feature matching step, which is also a core task in many computer vision tasks,
-    include occlusions, repetitive patterns, low-texture regions,or changes in lighting conditions.
-    Developing robust feature matching techniques that can handle such challenges is an ongoing research focus.
+    Some of the key challenges in feature matching, which is also a core task in many computer vision tasks,
+    include occlusions, repetitive patterns, low-texture regions, and changes in lighting conditions.
     Noise and outliers, like moving objects, also can negatively impact the accuracy
     of the reconstructed 3D scene and camera poses. Moreover, SfM algorithms are computationally intensive,
     making them challenging to deploy in real-time or online applications where speed is crucial.
 
     Recent papers have shown great improvement in all these challenges. In this thesis, some of the best aproaches are
     reviewed and compared. Among these papers, "Pixel-Perfect Structure-from-Motion with Featuremetric Refinement",
-    ~\cite{lindenberger2021pixsfm}, has shown a prominent performance. The proposed method in this paper generates a feature map per image using CNNs.
-    Then, it adjusts the position of the existing keypoints, that are detected by any of methods mentioned in
-    [\cite{wang2020displacement}, \cite{revaud2019r2d2}, \cite{detone2018superpoint}, \cite{dusmanu2019d2net}, and \cite{detone2018superpoint}]
-    , by defining a flow from one point to another through a gradient descent update and a loss function based
-    on the differences in their feature map values.
+    ~\cite{lindenberger2021pixsfm}, has shown a prominent performance. Their method can be added as an extra refinement
+    step to the SfM pipeline. In summary, this paper generates
+    a feature map per image using CNNs. Then, it adjusts the position of the existing keypoints by defining a flow
+    from one point to another through a gradient descent update and a loss function based on the differences in their
+    feature map values.
     Furthermore, in bundle adjustment's reprojection error, this paper considers the difference between the
-    feature vectors instead of typical euclidean distance between the original 2D data points and the reprojected 3D points.
+    feature vectors instead of typical euclidean distance between the original 2D data points and the reprojected
+    3D points (See chapter \ref{chap:sfm}).
+
+    Next, we will develop an algorithm that uses SfM to localize the images
+    in a city. What if the task of localization become perfectly offline without any usage of GPS or other online technologies?
+    A large-scale dataset of more than 3 millions 3D points has already been acquired via an airplane over the city of Padova,
+    covering an area of 1600m by 1000m. Our camera is fixed on the head of a vehicle, and several videos are captured
+    from the streets of the city center. The frames of these videos are passed through Structure from Motion
+    pipeline, and then, the results are refined by ~\cite{lindenberger2021pixsfm} paper mentioned above. After some
+    proper preprocessings, the resulting point clouds are registered within the big city point cloud, i.e. the position
+    of our captured point cloud is found in the city. A detailed description of the proposed algorithm can found in
+    chapter \ref{chap:experiment}.
+
+    This thesis is structured as follows:
+    \begin{itemize}
+        \item In Chapter \ref{chap:background} , the mathematical and geometrical background required for our work are presented, including camera
+        geometry, Epipolar geometry
+        \item In Chapter \ref{chap:sfm}, the algorithm of Structure from Motion is described in detail, and then, a selection
+        of papers with the best contributions to this field are reviewed; With particlar attention to "Pixel-Perfect
+        Structure-from-Motion with Featuremetric Refinement", ~\cite{lindenberger2021pixsfm}
+        \item In Chapter \ref{chap:experiment}, our algorithm for localization is explained, along with our dataset, experiment
+        results and their discussion;
+        \item Lastly, in Chapter \ref{chap:conclusion, prons and cons of our method are discussed, and a few ideas for future improvements
+        are suggested.
+    \end{itemize}
+
 \end{document}
