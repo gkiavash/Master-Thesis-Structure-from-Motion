@@ -24,7 +24,8 @@
     These parameters, which characterize the internal geometry of the camera, are known as intrinsic parameters.
 
     Cameras can have different focal lengths along x and y axes($f_{x} , f_{y}$). And, principal point ($c_{x}, c_{y}$) are
-    the coordinates of the optical center in the image plane.
+    the coordinates of the optical center in the image plane. The 2D coordinates of a 3D point on the image plane can
+    be calculated by similar triangles' equation:
 
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/pinhole_2.png}
 
@@ -141,7 +142,7 @@
 
 
     \section{Stereo Cameras}
-
+    \label{stereo_cameras}
     \paragraph{Epipolar geometry}, refers to the geometry of two images of a 3D scene taken
     by two cameras. The two cameras are presumed to have a defined relative pose, which is
     the position and orientation of one camera in relation to the other, and a known internal calibration
@@ -165,40 +166,67 @@
     
     \paragraph{Essential Matrix:} Let  $\tilde{p}_l$ and $\tilde{p}_r$ be the vectors from the center of cameras to the points p and p' from figure \ref{fig:stereo_cameras}.
     Recalling translation (t) and rotation (R) matrices, $(t \times R\tilde{p}_r)$  is the cross product vector which is orthogonal to the epipolar plane. Hence,
-    \[
+
+    \begin{equation}
+        \label{eq:1}
         \tilde{p}_l \cdot (t \times R\tilde{p}_r) = 0
-    \]
+    \end{equation}
 
     Essential matrix is a 3x3 matrix that relates two cameras' poses of two viewpoints. It encodes,
     the relative position and orientation of the two cameras in relation to one another:
+    \[ E &= R[t]_{\times} \]
+    Where $[t]_{\times}$ is
     \[
         [t]_{\times} &=
         \left[
             {\begin{array}{ccc}
-          0 & -t_{3} & t_{2} \\
-          t_{3} & 0 & -t_{1} \\
-          -t_{2} & t_{1} & 0 \\
+              0 & -t_{3} & t_{2} \\
+              t_{3} & 0 & -t_{1} \\
+              -t_{2} & t_{1} & 0 \\
             \end{array}}
         \right]
     \]
 
-    \[ E &= R[t]_{\times} \]
+    By replacing the essential matrix in equation \ref{eq:1}:
+    \[ \tilde{p}_l^\top \times E \times \tilde{p}_r &= 0 \]
 
-    In figure \ref{fig:stereo_cameras}, for the two points p in the first image and p' in the second image representing the same 3D point P, the following equation holds:
-    \[ p \times E \times p' &= 0 \]
-
-    By having the linear equation above for a set of corresponded points between two images, essential matrix
+    Having the linear equation above for a set of corresponded points between two images, essential matrix
     can be calculated. The most common used algorithm to find the essential matrix is known as "Eight-point algorithm".
 
     In 3D vision problems, once the essential matrix has been calculated, the relative position and orientation
     of the two cameras, i.e. the rotation matrix R and translation vector t, are extracted.
     
     \paragraph{Fundamental Matrix:} A 3x3 matrix that contains not only relative camera poses but also
-    camera intrinsic parameters. It connects corresponding points in the two views to the other view's
-    corresponding epipolar lines. By having Essential matrix, K and K' as intrinsic camera matrices,
+    camera intrinsic parameters. By having Essential matrix, K and K' as intrinsic camera matrices,
     the fundamental matrix is defined as follows:
     \[ F &= K^{-T} \times E \times K'^{-1}\]
+    The same as essential matrix, for points p and p' on image planes:
     \[ p \times F \times p' &= 0 \]
+
+    To calculate the fundamental matrix, the linear equation above can be expanded as follows:
+    \begin{equation*}
+        p =
+        \begin{bmatrix}
+            x & y & 1
+        \end{bmatrix}
+        \text{, }
+        F =
+        \begin{bmatrix}
+        f_{11} & f_{12} & f_{13} \\
+        f_{21} & f_{22} & f_{23} \\
+        f_{31} & f_{32} & f_{33} \\
+        \end{bmatrix}
+        \text{, }
+        p' =
+        \begin{bmatrix}
+            x' & y' & 1
+        \end{bmatrix}
+    \end{equation*}
+    \begin{equation*}
+        x'xf_{11} + x'yf_{12} + x'f_{13} + y'xf_{21} + y'yf_{22} + y'f_{23} + xf_{31} + yf_{32} + f_{33} = 0 \\
+    \end{equation*}
+
+    By rewriting the equation above for multiple correspondence, the homogeneous linear system can be solved using SVD method.
 
     \section{Two View Geometry}
 
@@ -221,26 +249,22 @@
     \[ d &= x_{c} - x'_{c} &= \frac{fB}{Z} \]
     \[ Z &= \frac{fB}{d} \]
 
-    Let d, from the equation above, called the disparity which is the difference in the coordinates of the pixels in the two images pointing to the same 3D point.
+    Let d, from the equation above, called the disparity which is the difference in the coordinates of the pixels in both images pointing to the same 3D point.
     Therefore, the only challenge is to find the disparity of each pixel.
 
     \paragraph{For other camera settings}, e.g. non-parallel baselines, different camera parameters,
     the fundamental matrix is the key option that can be used to find the depth of points.
     A 3D point can be defined as the intersection of the rays that start from the centers of cameras and
-    cross the corresponded 2D keypoints in each image plane. Recalling figure \ref{fig:stereo_cameras}, the epipolar
-    line and the vector that starts from the center of the camera and ends in the point p are perpendicular to
-    each other, meaning $p^{T} \cdot l &= 0$ and $p'^{T} \cdot l' &= 0$ . So, by having the epipolar line, the
-    position of the 3D point can be caluclulated.
-
-    In practice, first, the essential matrix is calculated by finding the accurate feature matches between
-    the two images. Then, for each pixel, the corresponding pixel from the other image is found along the epipolar lines.
-    The epipolar lines help to limit the search space for matching process from all pixels over the images to the pixels
+    cross the corresponded 2D keypoints in each image plane. In practice, first, the fundamental and the essential
+    matrices are calculated by finding the accurate feature matches between
+    the two images. Then, after having the relative pose of cameras, for all pixels, the corresponding pixel from the other image is found along the epipolar lines.
+    The epipolar lines help to limit the search space for matching process from all pixels over the images to only the pixels
     on epipolar line and its surroundings. By having camera poses and all matches, 3D points could be obtained by triangulation.
 
     \section{Camera Distortion and Calibration}
 
     \paragraph{Distortion} refers to the deviation between the ideal pinhole camera model and the actual camera
-    used to capture images. The pinhole camera model assumes that light rays pass through a sinfvgle point, or
+    used to capture images. The pinhole camera model assumes that light rays pass through a single point, or
     the pinhole, before forming an image on a flat image plane. However, real-world cameras have imperfect
     lenses, that doesn't let rays reflect straightly and causes distortions to the image.
 
@@ -262,11 +286,11 @@
     can be in meters, while focal length is usually around millimeters. Therefore, a small error in focal length
     can cause high misplacement of a 3D point's position.
 
-    \paragraph{Homography:} Let there be two images from the same planar scene, e.g. an identity card, but from
+    \paragraph{Homography:} Let there be two images from the same planar scene, e.g. a rectangular identity card, but from
     different viewpoints. The second view can be obtained from the first view by multiplying the first image by
     a 3x3 matrix called Homography matrix.
 
-    A checkerboard is used take picture for calibration since it is a planar object and it has distinctive features,
+    A checkerboard is used to take pictures of for calibration since it is a planar object and it has distinctive features,
     i.e. checkerboard corners, that are easy to detect. A set of pictures are taken from different point of views.
     By using homography, an initial guess for intrinsic parameters are calculated. Then, the final calibration
     parameters are refined by optimizing the reporjection equations for checkerboard corners.

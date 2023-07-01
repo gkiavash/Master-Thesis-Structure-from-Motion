@@ -12,7 +12,7 @@
     to refine our reconstruction. Furthermore, a few handcrafted methods are applied as preprocessing before
     registration, like aligning on the z axis, filtering, and slicing. On the other hand, we already had an
     extensive point cloud captured by an airplane from the whole city as aerial(source) point cloud. The template matching algorithm
-    localized the ground 3D points in smaller windows of the aerial point cloud. Our extended template matching
+    localized the ground 3D points in local windows of the aerial point cloud. Our extended template matching
     algorithm returned not only the coordinates but also the scale and rotation of the template ground point cloud.
     Next, we scaled and transformed our main ground point cloud with these results into aerial point cloud, and then,
     we employed the Iterative Closest Point (ICP) algorithm for local point cloud registration.
@@ -25,14 +25,14 @@
     As it is observed in the template matching results, the bigger the window of the aerial point cloud is, the harder it is to localize.
     Therefore, we may think of another approach for global registration. In our experiments, it is noticed that by
     looking at both point clouds from top viewpoint, crossroads are differentiable. So, if we could detect them as
-    keypoints and provide a proper descriptor for each crossroad, it is possible to register by correspondences
+    keypoints and provide a proper descriptor for each crossroad, it is possible to register by correspondence
     the ground point cloud in wider windows of the aerial point cloud. Our deep learning approach showed it is
     possible to filter the crossroads by generating the binary grid maps from top viewpoint as input to our model.
     However, we had to prepare a huge and comprehensive dataset of crossroads which needed a longer time for this thesis.
 
-    To conclude, nowadays, with the advancements in cameras and powerful computer, the computation of accurate and
+    To conclude, nowadays, with the advancements in cameras and powerful computers, the computation of accurate and
     real-time 3D data is becoming increasingly feasible. This will lead to a rapid expansion of 3D applications like autonomous
     driving and augmented reality. Structure from Motion has proven to be a powerful tool for generating accurate
-    and detailed 3D structures. Therefore, improving the accuracy and performance of this algorithm plays and important role in the future.
+    and detailed 3D structures. Therefore, improving the accuracy and performance of this algorithm plays an important role in the future.
 
 \end{document}

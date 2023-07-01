@@ -30,41 +30,40 @@
     \paragraph{Aerial Point Cloud:} An extensive collection of 3D points is obtained from the city of Padova
     using an airplane. The covered region spans 1600m by 1000m, and the average nearest neighbor distance
     of points is 0.63m. The dataset contains a total of 3,583,803 points, figure \ref{fig:ply_aerial_all}.
-    \paragraph{Ground Point Clouds:} 10 dense point clouds are created using the Structure from Motion techniques.
-    These datasets are further refined using Pixel-Perfect algorithm. Each dataset comprises an average of
-    60 frames extracted from a 30-second undistorted video. The video was recorded at a frame rate of 60 fps,
-    resulting in the generation of point clouds at a rate of 2 pictures per second. The resolution of each image
-    is 1920*1088 pixels, and the distance covered in each dataset ranges from 80 to 120 meters.
+    \paragraph{Ground Point Clouds:} 10 dense point clouds are created using the Structure from Motion algorithm.
+    They are further refined by Pixel-Perfect algorithm. Each dataset comprises an average of
+    60 frames extracted from a 30-second undistorted video. The video was recorded at a frame rate of 60 fps.
+    The resolution of each image is 1920*1080 pixels, and the distance covered in each dataset ranges from 80 to 120 meters.
 
     \begin{figure}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/experiment/ply_aerial_all}
-    \caption{The aerial point cloud}
+    \caption{The aerial point cloud from the city of Padova}
     \label{fig:ply_aerial_all}
     \end{figure}
 
     \section{Point Cloud Registration}
     The objective is to align the ground point cloud with the aerial point cloud. Initially, we attempted
     to register the point cloud using traditional global and local algorithms like FPFH feature matching,
-    RANSAC, and ICP. However, due to significant differences in the nature of the datasets, the results were
+    RANSAC, and ICP. However, due to the significant differences in the nature of the datasets, the results were
     too poor. The aerial point cloud primarily consists of street points and building roofs, as it is captured
-    from above. While, the ground point cloud contains street points and building walls. Therefore, we need to
+    from above. While, the ground point cloud contains street points and building walls. Therefore, we had to
     find the common features and simplify the problem. The new pipeline could be described as follows:
     \begin{enumerate}
-        \item It was observed that viewing both point clouds from above, aligned with the z-axis, provides
+        \item It was observed that viewing both point clouds from top point of view, aligned with the z-axis, provides
         valuable information. The first step is to align the point clouds with the z-axis. The aerial
         point cloud is already aligned. The ground point cloud is segmented into planes, and the plane
         with the highest point count is identified as the street plane, since it is the common plane among
-        all streets and directions and so more points must be related to the ground plane. Then,
+        all streets and directions and so more points must fall on the ground plane. After that,
         the rotation matrix between the normal vector of the street plane and the (x=0, y=0, z=1) vector
-        is computed and applied to the entire ground point cloud. This step roughly determines the rotation
-        around x and y axes.
+        is computed, and then, the ground point cloud is rotated using the rotation matrix.
+        This step determines the rotation around x and y axes, roughly.
 
         \item From the top point of view, It is seen that the most discriminative feature among the datasets
         is the angles of streets and crossroads. So, the data of vertical walls in ground dataset and roofs
         in aerial dataset has no use. Therefore, both point clouds are sliced along the z-axis with a certain
         threshold, and the half related to the streets is remained. In figure \ref{fig:ply_sliced}, the similarity of
-        both ground and aerial point clouds are visible.
+        both sliced ground and aerial point clouds are visible.
         \begin{figure}
             \centering
             \begin{subfigure}{0.45\textwidth}
@@ -84,10 +83,11 @@
 
         \item Since the generated point clouds has the up-to-scale problem, it is needed to normalize the
         coordinate values across all datasets. This step does not scale the ground point clouds to the actual size
-        in aerial point cloud. However, it ensures that the average minimum distance between the points is 1px.
-        Each point cloud is scaled by the factor of 1 divided by the average of the minimum distance to the nearest point.
+        in aerial point cloud. However, it ensures that the average minimum distance between the points is the same
+        among all of the generated point cluds.
+        Each point cloud is scaled by the factor of 1 divided by the current average of the minimum distance to the nearest point.
 
-        \item A 2D binary map is generated for each point cloud considering only x and y coordinates of each 3D point.
+        \item A 2D binary map is generated for each point cloud considering only x and y coordinates of all 3D points.
         The dimensions of the map are determined by calculating the difference between the maximum and minimum x and y
         coordinates of all points and dividing it by a predefined resolution value. Each cell in the map is assigned
         a value of 1 if at least one point's x and y coordinates fall within that cell, indicating the presence of
@@ -105,11 +105,11 @@
         2D feature matching, crossroad detection based on point counting, and training convolutional neural networks,
         etc. Among these approaches, template matching has the best results. The template matching process involves
         comparing a small template image, which represents the desired pattern (in this case, the ground grid map),
-        with different regions of the target image (the aerial grid map). The objective is to identify the best match
-        or similarity between the template and the target image. This is achieved by moving a window across the target
-        image and comparing the template with each window. We also extended the algorithm to also includes different
-        scaling and rotation parameters. The template is rotated upto 360 degrees with an interval of 10 degrees and
-        scaled from 10\% to 200\% of its initial size, increasing 10 percent for each attempt.
+        with different regions of the target image (the aerial grid map), and identify the region that has the highest
+        similarity with the template. This is achieved by moving a window across the target
+        image and comparing the template with each window. We extended the algorithm to compare also different
+        scales and rotations of the template image. The template is rotated upto 360 degrees with an interval of 10 degrees and
+        scaled from 10\% to 200\% of its initial size, increasing 10 percent per each attempt.
 
     \end{enumerate}
 
@@ -149,37 +149,41 @@
 
     \section{Results}
     There are 10 ground datasets, and for each dataset, there are three aerial datasets categorized as easy, medium,
-    and hard. The Figure X shows the average success rate, in percentage, for all ground datasets based on the
+    and hard. The Figure \ref{fig:asr} shows the average success rate, in percentage, for all ground datasets based on the
     difficulty level of their corresponding aerial datasets.
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                title={Average Success Rate},
+                xlabel={difficulty level},
+                ylabel={percentage of success among all attepmts},
+                ymin=0, ymax=100,
+                xtick=data,
+                xticklabels={easy, medium, hard,},
+                ytick={0,20,40,60,80,100},
+                legend pos=north west,
+                ymajorgrids=true,
+                grid style=dashed,
+            ]
 
-    \begin{tikzpicture}
-        \begin{axis}[
-            title={Average Success Rate},
-            xlabel={difficulty level},
-            ylabel={percentage of success among all attepmts},
-            ymin=0, ymax=100,
-            xtick=data,
-            xticklabels={easy, medium, hard,},
-            ytick={0,20,40,60,80,100},
-            legend pos=north west,
-            ymajorgrids=true,
-            grid style=dashed,
-        ]
-
-            \addplot[
-                color=blue,
-                mark=square,
-                ]
-                coordinates {
-                (1,80)
-                (2,50)
-                (3,30)
-                };
-        \end{axis}
-    \end{tikzpicture}
+                \addplot[
+                    color=blue,
+                    mark=square,
+                    ]
+                    coordinates {
+                    (1,80)
+                    (2,50)
+                    (3,30)
+                    };
+            \end{axis}
+        \end{tikzpicture}
+        \label{fig:asr}
+        \caption{Average Success Rate for template matching}
+    \end{figure}
 
     Here are the final matches for the datasets. For each ground dataset, 3 images are provided illustrating the
-    matches in easy, medium and hard aerial point clouds. The yellow pixels refer to the aerial point cloud(source)
+    result matches in easy, medium and hard aerial point clouds. The yellow pixels refer to the aerial point cloud(source)
     and green pixels are related to the ground point cloud(template). The axes of the graph are scaled in meters multiplied
     by a resolution value. This resolution is either 3.3 or 6.6 and is because of variations in the density of points
     and for a more accurate representation of the grid maps.
@@ -234,7 +238,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 1}
-        \label{tab:simpletable}
+        \label{tab:tab_1}
     \end{table}
 
     % 4_1_3
@@ -283,7 +287,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 2}
-        \label{tab:simpletable}
+        \label{tab:tab_2}
     \end{table}
 
     % 5_1_2
@@ -332,7 +336,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 3}
-        \label{tab:simpletable}
+        \label{tab:tab_3}
     \end{table}
 
     % 4_0_1
@@ -381,7 +385,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 3}
-        \label{tab:simpletable}
+        \label{tab:tab_4}
     \end{table}
 
     % 5_6_2
@@ -424,13 +428,13 @@
           \hline
           \textbf{Easy}   & <1m  & -9.1\% & -3° \\
           \hline
-          \textbf{Medium} & #TODO  & +27.2\% & +7° \\
+          \textbf{Medium} & 5.44m  & +27.2\% & +7° \\
           \hline
-          \textbf{Hard}   & #TODO  & +81.2\% & -3° \\
+          \textbf{Hard}   & 8.63m  & +81.2\% & -3° \\
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 5}
-        \label{tab:simpletable}
+        \label{tab:tab_5}
     \end{table}
 
     % 5_7_1
@@ -479,7 +483,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 6}
-        \label{tab:simpletable}
+        \label{tab:tab_6}
     \end{table}
 
     % 5_2_4
@@ -528,7 +532,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 7}
-        \label{tab:simpletable}
+        \label{tab:tab_7}
     \end{table}
 
     % 5_7_2
@@ -577,7 +581,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 8}
-        \label{tab:simpletable}
+        \label{tab:tab_8}
     \end{table}
 
     % 5_6_1
@@ -609,7 +613,7 @@
         \hfill
 
         \caption{Dataset 9}
-        \label{fig:res_5_7_2}
+        \label{fig:res_5_6_1}
     \end{figure}
 
     \begin{table}[p]
@@ -626,7 +630,7 @@
           \hline
         \end{tabular}
         \caption{Detailed errors of Dataset 9}
-        \label{tab:simpletable}
+        \label{tab:tab_9}
     \end{table}
 
 
@@ -645,7 +649,7 @@
             \centering
             \includegraphics[width=\linewidth]{images/full/medium/5_2_3_medium}
             \caption{Medium: \textcolor{red}{Failed}}
-            \label{fig:5_2_4_medium}
+            \label{fig:5_2_3_medium}
         \end{subfigure}
 
         \vspace{1em}
@@ -664,7 +668,58 @@
 
     \clearpage
 
-    
+    Next, by mapping the resulted 2D coordinates to the aerial point cloud's reference frame, and applying the scaling
+    and rotation factors, the ground point cloud is located inside the aerial point cloud. Then, since the successful results
+    are close enough to the ground truth, we used Iterative Closest Point (ICP), which a common local point cloud
+    registration algorithm for final refinement. Figure \ref{fig:icp_refine} shows a few of the best results:
+
+    \begin{figure}[p]
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/full/ply/5_1_2_before_icp}
+            \caption{Dataset 3: Before ICP}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/full/ply/5_1_2_after_icp}
+            \caption{Dataset 3: After ICP}
+        \end{subfigure}
+
+        \vspace{1em}
+
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/full/ply/5_7_1_before_icp}
+            \caption{Dataset 6: Before ICP}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/full/ply/5_7_1_after_icp}
+            \caption{Dataset 6: After ICP}
+        \end{subfigure}
+
+        \vspace{1em}
+
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/full/ply/5_6_1_before_icp}
+            \caption{Dataset 9: Before ICP}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{images/full/ply/5_6_1_after_icp}
+            \caption{Dataset 9: After ICP}
+        \end{subfigure}
+
+        \caption{Moving the template matching results to the aerial point cloud reference frame}
+        \label{fig:icp_refine}
+    \end{figure}
+    \clearpage
+
 
     \section{Other Approaches}
     \paragraph{Crossroads detection based on handcrafted methods:}
@@ -705,7 +760,7 @@
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/experiment/crossroads_det_1}
     \caption{
         Left image: the actual point cloud,
-        Right image: the the same point cloud from the same viewpoint with only crossroads points
+        Right image: the same point cloud from the same viewpoint with only detected crossroads points using handcrafted methods
     }
     \label{fig:crossroads_det_1}
     \end{figure}
@@ -738,7 +793,7 @@
     shows a pair of examples of the binary grid maps representing a top-down view of a crossroad and a non-crossroad.
     The model was trained using a small dataset consisting of 10 inputs containing binary grid maps of both classes
     from Dataset 1. Then, we applied the trained model to the entire aerial point cloud of Dataset 1 and filtered out
-    points classified as non-crossroads. Figure \ref{fig:multi_plane_seg} illustrates the remaining points identified
+    points classified as non-crossroads. Figure \ref{fig:res_deep} illustrates the points identified
     as crossroads which includes points of the 4 main crossroads out of 5. The results demonstrated excellent performance.
     However, to ensure robustness, a significantly larger dataset considering the big 1600m*1000m aerial point cloud
     with approximately 3 million points would be necessary for training.
@@ -760,7 +815,15 @@
         \label{fig:ply_ml_dataset}
     \end{figure}
 
-    \clearpage
+    \begin{figure}
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth,keepaspectratio]{images/experiment/res_deep}
+    \end{subfigure}
+    \caption{Detected crossroads by CNNs: The red points are classified as crossroads}
+    \label{fig:res_deep}
+    \end{figure}
+
     \section{Reconstruction Details}
 
     \paragraph{COLMAP} is an open source software, implemented by ~\cite{schoenberger2016sfm} and ~\cite{schoenberger2016mvs},
@@ -768,7 +831,7 @@
     Sparse reconstruction results in the 3D point cloud of only the detected features, while dense reconstruction
     refers to the point cloud of all pixels in the input images. Dense reconstruction is achievable after obtaining
     sparse reconstruction with camera poses. By default, It runs PatchMatch algorithm \cite{journals/tog/BarnesSFG09}.
-    However, Each step of SfM pipline can be executed separately. Hence, any other algorithm can be replaced by
+    Each step of SfM pipline can be executed separately. So, any other algorithm can be replaced by
     its defaults. And, any extra steps, like refinements, can be added to the pipeline.
 
     \paragraph{Boosting Reconstruction pipeline:}
@@ -780,7 +843,7 @@
         \begin{adjustbox}{max width=\textwidth}
             \begin{tabular}{|c|c|c|c|c|c|c|}
                 \hline
-                 Steps:                 & Max num of features & Feature Extraction & Feature Matching & Bundle Adjustment & total    \\
+                 Inputs:                 & Max num of features & Feature Extraction & Feature Matching & Bundle Adjustment & total    \\
                 \hline
                 300 frames(1080p)       & 30000               & 0.85mins           & 1.01mins          & 21.5mins          & 23.36mins \\
                 \hline
@@ -790,7 +853,7 @@
                 \hline
             \end{tabular}
         \end{adjustbox}
-        \caption{The execution time of the sparse reconstruction for each step of the SfM algorithm using Nvidia Rtx3090 graphics}
+        \caption{The execution time of the sparse reconstruction for each step of the SfM algorithm using Nvidia RTX3090 graphics}
         \label{tab:exe_time}
     \end{table}
 
@@ -800,7 +863,7 @@
     the initial camera poses. The best solution we found that using COLMAP sparse reconstruction with low configuration
     parameters, such as lower image resolution and limiting the maximum number of keypoints and matches, just to obtain
     camera poses. Then, COLMAP's sparse reconstruction is re-executing with the initial camera poses and high-quality configuration.
-    This trick reduced the execution time significantly such that a dataset of 300 frames was reconstructed in 10 minutes.
+    This trick reduced the execution time significantly such that a dataset of 300 frames was reconstructed in 10 minutes.(See table \ref{tab:exe_time})
 
     \paragraph{Extra data from GoPro Camera:}
     GoPro cameras come with additional information for the captured videos, such as GPS, IMU.
@@ -863,21 +926,21 @@
     all GPS data for a long video, we realized that the coordinates are updated every 2 or 3 seconds which is not ideal.
     In SFM, the algorithm finds the coordinates of the camera for each frame. If we want to use GPS data as an initial
     value in SFM, 40 to 60 frames might have the same initial coordinates which doesn't help the algorithm.
-    Moreover, GPS data from GPMF metadata has an accuracy of three-tenth of a decimal. We checked this error in
-    Google Maps, and the error could be 10 meters. While, SFM has an error of less than a centimeter.
+    Moreover, GPS data from GPMF metadata has an accuracy of three-tenth of a decimal. We checked this error on
+    Google Maps, and the error could be around 10 meters. While, SFM has an error of less than centimeters.
 
     \paragraph{Calibration and its impact}
-    One of the case studies is if giving wider distorted images with manual calibration parameters to the SfM pipeline
+    One of our case studies was if giving wider but distorted images with manual calibration parameters to the SfM pipeline
     could enhance the accuracy and increase the number of generated point clouds of a wider field of view. We used
     the camera with 2.7k resolution, 60fps, and wide and distorted settings. The camera was calibrated using the
     checkerboard method. Figure \ref{fig:img_distorted} demonstrates an example of undistortion of video frame,
-    and Figure \ref{fig:ply_distorted} illustrates the resulting sparse point cloud.
+    and Figure \ref{fig:ply_distorted} illustrates the resulting sparse point clouds.
     The generated point cloud has notable error in the street angles, meaning that, from top point of view, the
-    streets should be perpendicular to each other. However, Figure \ref{fig:ply_distorted} displays an angle that is less than 90 degrees,
-    and the points associated with a ground truth plane are excessively spread out from the generated plane.
-    Furthermore, the execution time experienced an exponential increase. For instance, it took approximately
+    streets should have ben perpendicular to each other. However, the result displays an angle that is less than 90 degrees.
+    Also, the points associated with the ground truth plane are excessively spread out from the generated plane.
+    And, the execution time experienced an exponential increase. For instance, it took approximately
     10 minutes to construct sparse point cloud from the undistorted frames shown in Figure \ref{fig:ply_distorted}
-    , whereas the same procedure for the distorted frames required over 2 hours.
+    , whereas the same procedure for the distorted frames required more than 2 hours.
 
     \begin{figure}
         \centering
@@ -892,7 +955,7 @@
             \includegraphics[width=\linewidth]{images/experiment/img_undistorted}
             \caption{Corrected image using calibration parameters}
         \end{subfigure}
-        \caption{Samples of distorted and undistorted video frames}
+        \caption{Samples of distorted and corrected video frames}
         \label{fig:img_distorted}
     \end{figure}
 

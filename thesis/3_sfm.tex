@@ -7,17 +7,15 @@
 
 % Document
 \begin{document}
-    \section{Structure from Motion Revisited}
+    \section{Structure from Motion Algorithm}
     Structure from Motion is the task of calculating the 3D structure of a scene and the pose of cameras from
-    images captured in multiple views or video frames. SfM is an important tool in many applications like
-    Visual SLAM, 3D scanning, and Autonomous Driving. There are several algorithms used in SFM that help
-    in reconstructing the 3D structure. In this chapter, Incremental Structure from Motion, \cite{7780814}, will be explained
+    images captured in multiple views or video frames. In this thesis, Incremental Structure from Motion, \cite{7780814}, will be explained
     as it is the base algorithm for most papers in these criteria.
 
     \begin{figure}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/sfm.png}
-    \caption{Structure from Motion Revistied}
+    \caption{An overview of Structure from Motion Revisited, \cite{7780814} pipeline}
     \end{figure}
 
     The algorithm can be viewed as a pipeline that contains the following separated steps:
@@ -30,45 +28,47 @@
         of the most challenging parts in SfM. Occlusion, illumination changes, perspective transformation, and moving objects
         are some of them. However, since this is a core task in many Computer Vision tasks, there has been
         tons of researches in feature detection and matching, including deep based approaches. SIFT (\cite{lowe1999object}), SuperPoint (\cite{detone2018superpoint}),
-        D2-Net (\cite{dusmanu2019d2net}), R2D2 (\cite{revaud2019r2d2}) are often used among SfM related papers.
+        D2-Net (\cite{dusmanu2019d2net}), R2D2 (\cite{revaud2019r2d2}) are often used among SfM related papers which
+        will be described briefly in the next chapter.
 
         \item \textbf{Geometric Verification:} raw matches are not enough for the scene reconstruction.
-        Matches in similar repeated patterns, multiple objects in one image, etc, are some issues that may cause wrong
-        poses and 3D points. So, Outliers must be removed from the list of matches. By using the existing matches,
-        epipolar geometry and camera matrices(i.e. H, F, and E matrices) are calculated.
+        Matches in similar repeated patterns, multiple the same objects in one image, etc, are some issues that may cause wrong
+        poses and 3D points. So, outliers must be removed from the list of matches. By using the existing matches and
+        epipolar geometry, camera matrices(i.e. H, F, and E matrices) are calculated.
         Then, the rest of matches are verified by checking the geometric consistency of the reconstructed 3D points and
-        camera poses. otherwise, they are filtered out.
-        Without geometric verification, the reconstructed 3D model may contain errors that lead to incorrect result.
+        camera poses. If they do not result in the same poses, they are filtered out. Having more matches is good.
+        But, not all of them can be used.
 
         \item \textbf{Reconstruction Initialization:} If the pipeline is considered as an iterative or sequential process,
         a starting point is essential. Choosing a good initial pair of images is, so important. At the end of
         each iteration, the camera parameters and 3D structure are optimized. Without a good initial estimate,
-        the optimization process usually doesn't converge and stuck in local minima. A good initial pair can be
-        chosen usually from the top of the list of images that are sorted based on the number of correspondences matches.
+        the optimization process usually doesn't converge and stuck in local minima. A good initial pair usually is
+        chosen from the images with the highest number of matches.
 
-        \item \textbf{Image Registration and Triangulation:} After initialization, the algorithm uses triangulation to estimate
-        the 3D position of the matched features in every new image. Triangulation involves finding the intersection point
-        of two or more rays of light that originate from the camera and pass through the 2D features. The intersection
+        \item \textbf{Image Registration and Triangulation:} After initialization, the algorithm calculates the
+        camera pose for the new image by methods in section \ref{stereo_cameras} and uses triangulation to estimate
+        the 3D position of the matched features in every new image. Triangulation is the process of finding the intersection point
+        of two or more vectors that originate from the center of camera and pass through the 2D features. The intersection
         point represents the 3D position of the feature in the scene.
 
-        \item \textbf{Bundle Adjustment:} As the previous processes involve some errors, there may be inconsistencies
-        or misalignment between the estimated camera parameters and the triangulated 3D points, and since the algorithm is incremental, it could get worse
-        and worse for every new image. Bundle adjustment refines those parameters by rewriting the non-linear
-        reprojection equations which contain camera poses' matrices, calibration parameters, and, 3D points positions.
-        It typically uses an optimization algorithm such as Levenberg-Marquardt to minimize
-        the reprojection error. The optimization problem can be non-linear and high-dimensional, and it may take a
-        long time to converge to a good solution. However, bundle adjustment can significantly improve the accuracy
-        of the reconstructed 3D scene and camera poses.
+        \item \textbf{Bundle Adjustment:} As the previous processes involve some errors. There are inconsistencies
+        and misalignment between the estimated camera parameters and the triangulated 3D points, and since the algorithm
+        is incremental, the errors are accumulated for every new image. Bundle adjustment refines those parameters by
+        minimizing the non-linear reprojection equations. For each generated 3D point, its 3D coordinates are
+        transformed into the corresponding 2D image coordinates using the estimated camera projection matrix.
+        Then, the difference between the observed 2D projection and the reprojected 2D coordinates is considered as the error.
+        Levenberg-Marquardt algorithm is usually used to minimize the error.
+        The optimization problem can be high-dimensional, and it may take a long time to converge to a good solution.
+        Nonetheless, bundle adjustment can significantly improve the accuracy of the reconstructed 3D scene and camera poses.
 
     \end{enumerate}
 
     \section{Related Works}
-    Structure of Motion is a core task for many projects. It gives the ability to obtain detailed 3D models
-    of the environment from 2D images or video sequences. This information can be used widely in many other
-    tasks like object tracking, object detection, and also, understanding the scene and detecting speed and
-    positions of objects for autonomous driving as a high level tasks. Therefore, the accuracy and the speed
+    Structure of Motion is a core task for many other projects. The accuracy and the speed
     of the algorithm is crucial. For instance, even a minor rotation error of 1 degree in the camera can lead
-    to significant misalignment of point coordinates, particularly in open scenes, resulting in several meters of discrepancy.
+    to significant misalignment of point coordinates in meters, particularly in open scenes. Also, during our
+    experiment, it is observed that the pipeline fails in initialization step for considerable number of attempts
+    because of the lack of correct matches.
     Therefore, over the past few decades, there has been lots of efforts to improve each part of these algorithms.
     Here is a review of the recent best papers in this area:
 
@@ -93,7 +93,7 @@
     \begin{figure}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/dusmano.jpg}
-    \caption{Paper: Multi-View Optimization of Local Feature Geometry}
+    \caption{Paper: Multi-View Optimization of Local Feature Geometry, \cite{Dusmanu2020Multi}}
     \end{figure}
 
     \paragraph{Deep Two-View Structure-from-Motion Revisited} (~\cite{wang2021deep}) uses optical flow to predict
@@ -117,9 +117,9 @@
     accurate poses and depth maps, especially for textureless and occluded areas.
 
     \begin{figure}
-    \caption{Paper: Deep Two-View Structure-from-Motion Revisited}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/deep_two_sfm.jpg}
+    \caption{Paper: Deep Two-View Structure-from-Motion Revisited, \cite{wang2021deep}}
     \end{figure}
 
     \paragraph{} There are much more researches in feature matching step. \cite{revaud2019r2d2}, \cite{dusmanu2019d2net},
@@ -199,7 +199,7 @@
     \begin{figure}
     \centering
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{images/pixel_perfect.jpg}
-    \caption{Paper: Pixel-Perfect Structure-from-Motion with Featuremetric Refinement}
+    \caption{Paper: Pixel-Perfect Structure-from-Motion with Featuremetric Refinement, \cite{lindenberger2021pixsfm}}
     \end{figure}
 
     They use the initial idea of \cite{Dusmanu2020Multi} that separates the tracks for each keypoint, and
