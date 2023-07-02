@@ -48,14 +48,14 @@
     is successfully found in the source or not. Hence, the first metric used is the Average Success Rate.
     \paragraph{Average Success Rate:} For each ground binary map and its corresponding aerial binary map, if the difference
     between the four key parameters and their ground truth values is less than a certain threshold, it is considered
-    a successful match. In our experiment, the euclidean distance between the center of ground binary map and the ground
+    a successful match. In our experiment, the euclidean distance between the center of the ground binary map and the ground
     truth, i.e. which is the center of each aerial binary grid map, should not be more than 25 meters. An acceptable
-    scale factor is between 80\% to 130\% of the ground truth. And, the rotation angle should non be more than 10
+    scale factor is between 80\% to 130\% of the ground truth. And, the rotation angle should not be more than 10
     degrees, otherwise, in most cases, the wrong street is detected.
 
     \section{Results}
     There are 10 ground datasets, and for each dataset, there are three aerial datasets categorized as easy, medium,
-    and hard. The Figure \ref{fig:asr} shows the average success rate, in percentage, for all ground datasets based on the
+    and hard. Figure \ref{fig:asr} shows the average success rate, in percentage, for all ground datasets based on the
     difficulty level of their corresponding aerial datasets.
     \begin{figure}
         \centering
@@ -89,7 +89,7 @@
     \end{figure}
 
     Here are the final matches for the datasets. For each ground dataset, 3 images are provided illustrating the
-    result matches in easy, medium and hard aerial point clouds. The yellow pixels refer to the aerial point cloud(source)
+    result matches in easy, medium, and hard aerial point clouds. The yellow pixels refer to the aerial point cloud(source)
     and green pixels are related to the ground point cloud(template). The axes of the graph are scaled in meters multiplied
     by a resolution value. This resolution is either 3.3 or 6.6 and is because of variations in the density of points
     and for a more accurate representation of the grid maps.
@@ -574,7 +574,7 @@
 
     \clearpage
 
-    Next, by mapping the resulted 2D coordinates to the aerial point cloud's reference frame, and applying the scaling
+    Next, by mapping the resulting 2D coordinates to the aerial point cloud's reference frame, and applying the scaling
     and rotation factors, the ground point cloud is located inside the aerial point cloud. Then, since the successful results
     are close enough to the ground truth, we used Iterative Closest Point (ICP), which a common local point cloud
     registration algorithm for final refinement. Figure \ref{fig:icp_refine} shows a few of the best results:
@@ -644,7 +644,7 @@
     to remove border points while retaining the points related to the center of streets, potentially indicating
     crossroads. However, none of these methods provided accurate and robust results. Figure \ref{fig:ply_erosion} shows the
     result of preprocessing methods and Figure \ref{fig:crossroads_det_1} shows the best results of crossroads detection using
-    aforementioned handcrafted methods.
+    the aforementioned handcrafted methods.
 
     \begin{figure}
         \centering
@@ -833,7 +833,7 @@
     In SFM, the algorithm finds the coordinates of the camera for each frame. If we want to use GPS data as an initial
     value in SFM, 40 to 60 frames might have the same initial coordinates which doesn't help the algorithm.
     Moreover, GPS data from GPMF metadata has an accuracy of three-tenth of a decimal. We checked this error on
-    Google Maps, and the error could be around 10 meters. While, SFM has an error of less than centimeters.
+    Google Maps, and the error could be around 10 meters. While SFM has an error of less than centimeters.
 
     \paragraph{Calibration and its impact}
     One of our case studies was if giving wider but distorted images with manual calibration parameters to the SfM pipeline
@@ -841,11 +841,11 @@
     the camera with 2.7k resolution, 60fps, and wide and distorted settings. The camera was calibrated using the
     checkerboard method. Figure \ref{fig:img_distorted} demonstrates an example of undistortion of video frame,
     and Figure \ref{fig:ply_distorted} illustrates the resulting sparse point clouds.
-    The generated point cloud has notable error in the street angles, meaning that, from top point of view, the
-    streets should have ben perpendicular to each other. However, the result displays an angle that is less than 90 degrees.
+    The generated point cloud has a notable error in the street angles, meaning that, from the top point of view, the
+    streets should have been perpendicular to each other. However, the result displays an angle that is less than 90 degrees.
     Also, the points associated with the ground truth plane are excessively spread out from the generated plane.
     And, the execution time experienced an exponential increase. For instance, it took approximately
-    10 minutes to construct sparse point cloud from the undistorted frames shown in Figure \ref{fig:ply_distorted}
+    10 minutes to construct a sparse point cloud from the undistorted frames shown in Figure \ref{fig:ply_distorted}
     , whereas the same procedure for the distorted frames required more than 2 hours.
 
     \begin{figure}

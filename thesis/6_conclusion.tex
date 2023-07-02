@@ -14,7 +14,7 @@
     extensive point cloud captured by an airplane from the whole city as aerial(source) point cloud. The template matching algorithm
     localized the ground 3D points in local windows of the aerial point cloud. Our extended template matching
     algorithm returned not only the coordinates but also the scale and rotation of the template ground point cloud.
-    Next, we scaled and transformed our main ground point cloud with these results into aerial point cloud, and then,
+    Next, we scaled and transformed our main ground point cloud with these results into the aerial point cloud, and then,
     we employed the Iterative Closest Point (ICP) algorithm for local point cloud registration.
     And the results became much more accurate. As it is discussed before, it is unlikely to register directly
     the ground point cloud in the aerial point cloud
@@ -24,11 +24,11 @@
 
     As it is observed in the template matching results, the bigger the window of the aerial point cloud is, the harder it is to localize.
     Therefore, we may think of another approach for global registration. In our experiments, it is noticed that by
-    looking at both point clouds from top viewpoint, crossroads are differentiable. So, if we could detect them as
+    looking at both point clouds from the top viewpoint, crossroads are differentiable. So, if we could detect them as
     keypoints and provide a proper descriptor for each crossroad, it is possible to register by correspondence
     the ground point cloud in wider windows of the aerial point cloud. Our deep learning approach showed it is
-    possible to filter the crossroads by generating the binary grid maps from top viewpoint as input to our model.
-    However, we had to prepare a huge and comprehensive dataset of crossroads which needed a longer time for this thesis.
+    possible to filter the crossroads by generating the binary grid maps from the top viewpoint as input to our model.
+    However, we had to prepare a huge and comprehensive dataset of crossroads which needed longer time for this thesis.
 
     To conclude, nowadays, with the advancements in cameras and powerful computers, the computation of accurate and
     real-time 3D data is becoming increasingly feasible. This will lead to a rapid expansion of 3D applications like autonomous

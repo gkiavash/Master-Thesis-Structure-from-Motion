@@ -88,13 +88,13 @@
     to register the point cloud using traditional global and local algorithms like FPFH feature matching,
     RANSAC, and ICP. However, due to the significant differences in the nature of the datasets, the results were
     too poor. The aerial point cloud primarily consists of street points and building roofs, as it is captured
-    from above. While, the ground point cloud contains street points and building walls. Therefore, we had to
+    from above. While the ground point cloud contains street points and building walls. Therefore, we had to
     find the common features and simplify the problem. The new pipeline could be described as follows:
     \begin{enumerate}
-        \item It was observed that viewing both point clouds from top point of view, aligned with the z-axis, provides
+        \item It was observed that viewing both point clouds from the top point of view, aligned with the z-axis, provides
         valuable information. The first step is to align the point clouds with the z-axis. The aerial
         point cloud is already aligned. The ground point cloud is segmented into planes, and the plane
-        with the highest point count is identified as the street plane, since it is the common plane among
+        with the highest point count is identified as the street plane since it is the common plane among
         all streets and directions and so more points must fall on the ground plane. After that,
         the rotation matrix between the normal vector of the street plane and the (x=0, y=0, z=1) vector
         is computed, and then, the ground point cloud is rotated using the rotation matrix.
@@ -103,7 +103,7 @@
         \item From the top point of view, It is seen that the most discriminative feature among the datasets
         is the angles of streets and crossroads. So, the data of vertical walls in ground dataset and roofs
         in aerial dataset has no use. Therefore, both point clouds are sliced along the z-axis with a certain
-        threshold, and the half related to the streets is remained. In figure \ref{fig:ply_sliced}, the similarity of
+        threshold and the half related to the streets is remained. In figure \ref{fig:ply_sliced}, the similarity of
         both sliced ground and aerial point clouds are visible.
         \begin{figure}
             \centering
@@ -125,7 +125,7 @@
         \item Since the generated point clouds has the up-to-scale problem, it is needed to normalize the
         coordinate values across all datasets. This step does not scale the ground point clouds to the actual size
         in aerial point cloud. However, it ensures that the average minimum distance between the points is the same
-        among all of the generated point cluds.
+        among all of the generated point clouds.
         Each point cloud is scaled by the factor of 1 divided by the current average of the minimum distance to the nearest point.
 
         \item A 2D binary map is generated for each point cloud considering only x and y coordinates of all 3D points.
@@ -149,14 +149,14 @@
         with different regions of the target image (the aerial grid map), and identify the region that has the highest
         similarity with the template. This is achieved by moving a window across the target
         image and comparing the template with each window. We extended the algorithm to compare also different
-        scales and rotations of the template image. The template is rotated upto 360 degrees with an interval of 10 degrees and
+        scales and rotations of the template image. The template is rotated up to 360 degrees with an interval of 10 degrees and
         scaled from 10\% to 200\% of its initial size, increasing 10 percent per each attempt.
 
     \end{enumerate}
 
     The whole pipeline can be summarized as follows:
     \begin{enumerate}
-        \item Take the video of the streets, and extract the frames
+        \item Take the video of the streets and extract the frames
         \item Run sparse SfM algorithm
         \item Refine the sparse point cloud and camera poses using Pixel Perfect algorithm
         \item Generate a dense point cloud from the refined data
@@ -164,7 +164,7 @@
         \item Scale and Slice the ground point cloud, and keep the points with z coordinate less than a threshold,
         in our case, the threshold is 20\% of the minimum z-coordinate
         \item Generate the binary grid map
-        \item Slice Aerial point cloud along the z-axis with certain threshold, in our case, the threshold is 20\%
+        \item Slice Aerial point cloud along the z-axis with a certain threshold, in our case, the threshold is 20\%
         of the minimum of z coordinate of all points
         \item Generate Binary grid map for Aerial point cloud
         \item Run Template Matching algorithm to localize the ground grid map inside the aerial grind map
