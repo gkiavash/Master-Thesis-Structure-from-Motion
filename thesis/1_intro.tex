@@ -20,9 +20,7 @@
     by triangulation - and finally Bundle adjustment, i.e. optimizing the camera poses and 3D point positions by
     minimizing the reprojection error. (See Chapter \ref{chap:sfm})
 
-    Since the algorithm is incremental and iterative, errors will be cascaded for every new input, and so, there would be
-    an exponential growth in the overall error. Sometimes, it, even, fails and stops registering new images,
-    and the results converge to a completely wrong 3D scene. Therefore, the accuracy and robustness of each step of the algorithm are crucial.
+    Since the algorithm is incremental and iterative, without re-observing previously seen landmarks the errors increase for each new input image. Moreover, the reconstruction process may fail and it is no longer possible to record new images, with results that converge to a completely wrong 3D scene. Therefore, the accuracy and robustness of each step of the algorithm are crucial.
 
     Some of the key challenges in feature matching, which is also a core task in many computer vision tasks,
     include occlusions, repetitive patterns, low-texture regions, and changes in lighting conditions.
@@ -41,14 +39,11 @@
     feature vectors instead of the typical euclidean distance between the original 2D data points and the reprojected
     3D points (See chapter \ref{chap:sfm}).
 
-    Next, we will develop an algorithm that uses SfM to localize the images
-    in a city. What if the task of localization becomes perfectly offline without any usage of GPS or other online technologies?
-    A large-scale dataset of more than 3 million 3D points has already been acquired via an airplane over the city of Padova,
-    covering an area of 1600m by 1000m. Our camera is fixed on the head of a vehicle, and several videos are captured
-    from the streets of the city center. The frames of these videos are passed through Structure from Motion
-    pipeline, and then, the results are refined by ~\cite{lindenberger2021pixsfm} paper mentioned above. After some
-    proper preprocessing, the resulting point clouds are registered within the big city point cloud, i.e. the position
-    of our captured point cloud is found in the city. A detailed description of the proposed algorithm can be found in
+    In this thesis, we acquired several datasets from a hand-held camera moving in an urban environment. Our camera is fixed on the head of a vehicle, and several videos are captured from the streets of the city center of padova. The frames of these videos are passed through Structure from Motion pipeline, and then, the results are refined by ~\cite{lindenberger2021pixsfm} paper mentioned above, obtaining very promising 3D reconstructions.
+   Next, we will develop an algorithm that localizes the reconstructed point clouds inside a global map of the city. What if the task of localization becomes perfectly offline without any usage of GPS or other online technologies?
+    A large-scale dataset of more than 3 million 3D points has already been acquired via an airplane equipped with a LiDAR over the city of Padova,
+    covering an area of 1600m by 1000m. After some
+    proper preprocessing, our reconstructed  point clouds are registered within the big city point cloud, i.e. the position of our captured point cloud is found in the city. A detailed description of the proposed algorithm can be found in
     chapter \ref{chap:experiment}.
 
     This thesis is structured as follows:

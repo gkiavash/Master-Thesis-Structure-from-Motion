@@ -31,7 +31,9 @@
     using an airplane. The covered region spans 1600m by 1000m, and the average nearest neighbor distance
     of points is 0.63m. The dataset contains a total of 3,583,803 points, figure \ref{fig:ply_aerial_all}.
     \paragraph{Ground Point Clouds:} 10 dense point clouds are created using the Structure from Motion algorithm.
-    They are further refined by Pixel-Perfect algorithm.
+    They are further refined by Pixel-Perfect algorithm. Each dataset comprises an average of
+    60 frames extracted from a 30-second undistorted video. The video was recorded at a frame rate of 60 fps.
+    The resolution of each image is 1920*1080 pixels, and the distance covered in each dataset ranges from 80 to 120 meters.
 
     \section{Metrics}
     In our matching problem, there are four key parameters for evaluation:
@@ -82,11 +84,11 @@
                     };
             \end{axis}
         \end{tikzpicture}
-        \label{fig:asr}
         \caption{Average Success Rate for template matching}
+        \label{fig:asr}
     \end{figure}
 
-    Here are the final matches for the datasets. For each ground dataset, 3 images are provided illustrating the
+    Here are the final results of template matching. For each ground dataset, 3 images are provided illustrating the
     result matches in easy, medium, and hard aerial point clouds. The yellow pixels refer to the aerial point cloud(source)
     and green pixels are related to the ground point cloud(template). The axes of the graph are scaled in meters multiplied
     by a resolution value. This resolution is either 3.3 or 6.6 and is because of variations in the density of points
@@ -826,7 +828,6 @@
     Google Maps, and the error could be around 10 meters. While SFM has an error of less than centimeters.
 
     \paragraph{Calibration and its impact}
-    \label{calib_impact}
     One of our case studies was if giving wider but distorted images with manual calibration parameters to the SfM pipeline
     could enhance the accuracy and increase the number of generated point clouds of a wider field of view. We used
     the camera with 2.7k resolution, 60fps, and wide and distorted settings. The camera was calibrated using the
