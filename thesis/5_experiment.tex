@@ -31,9 +31,7 @@
     using an airplane. The covered region spans 1600m by 1000m, and the average nearest neighbor distance
     of points is 0.63m. The dataset contains a total of 3,583,803 points, figure \ref{fig:ply_aerial_all}.
     \paragraph{Ground Point Clouds:} 10 dense point clouds are created using the Structure from Motion algorithm.
-    They are further refined by Pixel-Perfect algorithm. Each dataset comprises an average of
-    60 frames extracted from a 30-second undistorted video. The video was recorded at a frame rate of 60 fps.
-    The resolution of each image is 1920*1080 pixels, and the distance covered in each dataset ranges from 80 to 120 meters.
+    They are further refined by Pixel-Perfect algorithm.
 
     \section{Metrics}
     In our matching problem, there are four key parameters for evaluation:
@@ -732,14 +730,6 @@
 
     \section{Reconstruction Details}
 
-    \paragraph{COLMAP} is an open source software, implemented by ~\cite{schoenberger2016sfm} and ~\cite{schoenberger2016mvs},
-    that provides 3D reconstruction based on 2D images. Spare and Dense Reconstructions are both implemented in COLMAP.
-    Sparse reconstruction results in the 3D point cloud of only the detected features, while dense reconstruction
-    refers to the point cloud of all pixels in the input images. Dense reconstruction is achievable after obtaining
-    sparse reconstruction with camera poses. By default, It runs PatchMatch algorithm \cite{journals/tog/BarnesSFG09}.
-    Each step of SfM pipline can be executed separately. So, any other algorithm can be replaced by
-    its defaults. And, any extra steps, like refinements, can be added to the pipeline.
-
     \paragraph{Boosting Reconstruction pipeline:}
     The process of Structure from Motion is computationally heavy and not suitable for real-time usage,
     particularly when it comes to dense reconstruction. Table \ref{tab:exe_time} presents the execution time of the sparse reconstruction
@@ -836,6 +826,7 @@
     Google Maps, and the error could be around 10 meters. While SFM has an error of less than centimeters.
 
     \paragraph{Calibration and its impact}
+    \label{calib_impact}
     One of our case studies was if giving wider but distorted images with manual calibration parameters to the SfM pipeline
     could enhance the accuracy and increase the number of generated point clouds of a wider field of view. We used
     the camera with 2.7k resolution, 60fps, and wide and distorted settings. The camera was calibrated using the

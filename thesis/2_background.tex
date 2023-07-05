@@ -142,6 +142,38 @@
     As can be seen from the equations, the depth (Z) of the real world points have vanished during the projection.
     In the next sections, we will see how to recover the depth.
 
+    \section{Camera Distortion and Calibration}
+
+    \paragraph{Distortion} refers to the deviation between the ideal pinhole camera model and the actual camera
+    used to capture images. The pinhole camera model assumes that light rays pass through a single point, or
+    the pinhole, before forming an image on a flat image plane. However, real-world cameras have imperfect
+    lenses, that don't let rays reflect straightly and cause distortions to the image.
+
+    There are two kinds of camera distortions:
+
+    \begin{enumerate}
+        \item Radial distortion is caused by the curvature of the camera lens. This type of distortion
+        causes straight lines to appear curved in the image, especially near the edges of the image.
+        \item Tangential distortion occurs when the lens is not aligned perfectly parallel to the image plane.
+        This causes the image to appear skewed, with some parts appearing closer or farther from the camera
+        than they should.
+    \end{enumerate}
+    {\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{distortion.PNG}}
+
+    \paragraph{Homography:} Let there be two images from the same planar scene, e.g. a rectangular identity card, but from
+    different viewpoints. The second view can be obtained from the first view by multiplying the first image by
+    a 3x3 matrix called Homography matrix.
+
+    \paragraph{Camera calibration} is the process of estimating the intrinsic parameters like focal length,
+    principal point, and distortion coefficients, as well as the extrinsic parameters like camera position
+    and orientation for each image. The accuracy of this step has a significant impact on 3D reconstruction.
+    As it is mentioned in previous sections, the depth of a pixel has a direct relation with focal length. The depth
+    can be in meters, while focal length is usually around millimeters. Therefore, a small error in focal length
+    can cause high misplacement of a 3D point's position.
+    A checkerboard is used to take pictures of for calibration since it is a planar object and it has distinctive features,
+    i.e. checkerboard corners, that are easy to detect. A set of pictures are taken from different points of view.
+    By using homography, an initial guess for intrinsic parameters is calculated. Then, the final calibration
+    parameters are refined by optimizing the reporjection equations for checkerboard corners.
 
     \section{Stereo Cameras}
     \label{stereo_cameras}
@@ -262,39 +294,5 @@
     the two images. Then, after having the relative pose of cameras, for all pixels, the corresponding pixel from the other image is found along the epipolar lines.
     The epipolar lines help to limit the search space for the matching process from all pixels over the images to only the pixels
     on epipolar line and its surroundings. By having camera poses and all matches, 3D points could be obtained by triangulation.
-
-    \section{Camera Distortion and Calibration}
-
-    \paragraph{Distortion} refers to the deviation between the ideal pinhole camera model and the actual camera
-    used to capture images. The pinhole camera model assumes that light rays pass through a single point, or
-    the pinhole, before forming an image on a flat image plane. However, real-world cameras have imperfect
-    lenses, that don't let rays reflect straightly and cause distortions to the image.
-
-    There are two kinds of camera distortions:
-
-    \begin{enumerate}
-        \item Radial distortion is caused by the curvature of the camera lens. This type of distortion
-        causes straight lines to appear curved in the image, especially near the edges of the image.
-        \item Tangential distortion occurs when the lens is not aligned perfectly parallel to the image plane.
-        This causes the image to appear skewed, with some parts appearing closer or farther from the camera
-        than they should.
-    \end{enumerate}
-    {\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{distortion.PNG}}
-
-    \paragraph{Camera calibration} is the process of estimating the intrinsic parameters like focal length,
-    principal point, and distortion coefficients, as well as the extrinsic parameters like camera position
-    and orientation for each image. The accuracy of this step has a significant impact on 3D reconstruction.
-    As it is mentioned in previous sections, the depth of a pixel has a direct relation with focal length. The depth
-    can be in meters, while focal length is usually around millimeters. Therefore, a small error in focal length
-    can cause high misplacement of a 3D point's position.
-
-    \paragraph{Homography:} Let there be two images from the same planar scene, e.g. a rectangular identity card, but from
-    different viewpoints. The second view can be obtained from the first view by multiplying the first image by
-    a 3x3 matrix called Homography matrix.
-
-    A checkerboard is used to take pictures of for calibration since it is a planar object and it has distinctive features,
-    i.e. checkerboard corners, that are easy to detect. A set of pictures are taken from different points of view.
-    By using homography, an initial guess for intrinsic parameters is calculated. Then, the final calibration
-    parameters are refined by optimizing the reporjection equations for checkerboard corners.
 
 \end{document}
