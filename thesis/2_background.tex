@@ -15,7 +15,7 @@
 \begin{document}
     \section{Pinhole Camera}
 
-    A pinhole camera is, basically, consists of a small hole and a plane behind. The light from the real world
+    A pinhole camera consists of a small hole and a plane behind. The light from the real-world
     object passes through the hole and forms an inverted and laterally inverted image on the plane which is at
     a distance F from the hole. For the sake of simplicity, it is assumed that there is a virtual screen in front
     of the hole at the same distance F. The same image from the real screen is excepted which is upright if the
@@ -23,7 +23,7 @@
     as the focal length. The intersection of the optical axis of the lens and the image plane is the principal point.
     These parameters, which characterize the internal geometry of the camera, are known as intrinsic parameters.
 
-    Cameras can have different focal lengths along x and y axes($f_{x} , f_{y}$). And, principal point ($c_{x}, c_{y}$) are
+    Let $f$ be the focal length, i.e. the distance between the image plane and the hole. And, principal point ($c_{x}, c_{y}$) are
     the coordinates of the optical center in the image plane. The 2D coordinates of a 3D point on the image plane can
     be calculated by similar triangles' equation:
 
@@ -49,23 +49,23 @@
     &=
     \underbrace{\left[
         {\begin{array}{c}
-          \frac{X_{P}f_{x}}{Z_{P}} \\
-          \frac{Y_{P}f_{y}}{Z_{P}} \\
+          \frac{X_{P}f}{Z_{P}} \\
+          \frac{Y_{P}f}{Z_{P}} \\
         \end{array}}
     \right]}_{\textrm{similar triangle equation}}
     \Rightarrow
     \left[
         {\begin{array}{c}
-          X_{P}f_{x} \\
-          Y_{P}f_{y} \\
+          X_{P}f \\
+          Y_{P}f \\
           Z_{P} \\
         \end{array}}
     \right]
     &=
     \left[
         {\begin{array}{cccc}
-          f_{x} & 0 & 0 & 0 \\
-          0 & f_{y} & 0 & 0 \\
+          f & 0 & 0 & 0 \\
+          0 & f & 0 & 0 \\
           0 & 0 & 1 & 0 \\
         \end{array}}
     \right]
@@ -78,7 +78,9 @@
         \end{array}}
     \right] \]
 
-    Considering Principal Points $(u_{c}, v_{c})$:
+    Let's consider Principal Point $(u_{c}, v_{c})$ in pixels, and $(w, h)$ are the pixel width and height in meters, respectively:
+    \[ \alpha_{u} & = \frac{f}{w} \]
+    \[ \alpha_{v} & = \frac{f}{h} \]
 
     \[
     \left[
@@ -105,8 +107,8 @@
     &=
     \left[
         {\begin{array}{cccc}
-      f_{x} & 0 & u_{c} & 0 \\
-      0 & f_{y} & u_{v} & 0 \\
+      \alpha_{u} & 0 & u_{c} & 0 \\
+      0 & \alpha_{v} & u_{v} & 0 \\
       0 & 0 & 1 & 0 \\
         \end{array}}
     \right]
@@ -127,8 +129,8 @@
         &=
         \left[
             {\begin{array}{ccc}
-          f_{x} & 0 & u_{c} \\
-          0 & f_{y} & v_{c} \\
+          \alpha_{u} & 0 & u_{c} \\
+          0 & \alpha_{v} & v_{c} \\
           0 & 0 & 1 \\
             \end{array}}
         \right]
@@ -143,7 +145,7 @@
 
     \section{Stereo Cameras}
     \label{stereo_cameras}
-    \paragraph{Epipolar geometry}, refers to the geometry of two images of a 3D scene taken
+    \paragraph{Epipolar geometry} refers to the geometry of two images of a 3D scene taken
     by two cameras. The two cameras are presumed to have a defined relative pose, which is
     the position and orientation of one camera in relation to the other, and a known internal calibration
     (i.e., focal length, principle point).
@@ -164,7 +166,7 @@
     intersected by the baseline, which connects the centers of the two cameras. To put it another way,
     each camera perceives the epipole of the other camera as a projection of the other camera's center.
 
-    \paragraph{Essential Matrix:} Let  $\tilde{p}_l$ and $\tilde{p}_r$ be the vectors from the center of cameras to the points p and p' from figure \ref{fig:stereo_cameras}.
+    \paragraph{Essential Matrix:} Let  $\tilde{p}_l$ and $\tilde{p}_r$ be the vectors from the center of cameras to the points p and p' from figure \ref{fig:stereo_cameras}, meaning that the intrinsic parameters are known.
     Recalling translation (t) and rotation (R) matrices, $(t \times R\tilde{p}_r)$  is the cross product vector which is orthogonal to the epipolar plane. Hence,
 
     \begin{equation}
@@ -234,7 +236,7 @@
     by two cameras with different viewpoints, and detecting the 3D position of points in the scene. We start by
     detecting the depth of a pixel with basic geometry calculus, and then, generalize it to all possible camera settings.
 
-    \paragraph{Rectilinear Rig} Starting with two cameras with the same intrinsic parameters with parallel baseline, i.e. the planes of
+    \paragraph{Rectilinear Rig} Starting with two cameras with the same intrinsic parameters on the same baseline, i.e. the planes of
     two cameras are aligned in one line as shown in figure \ref{fig:rect_rig}, By using similar triangles equations,
     the depth of a keypoint can be calculated:
 
@@ -252,7 +254,7 @@
     Let d, from the equation above, called the disparity which is the difference in the coordinates of the pixels in both images pointing to the same 3D point.
     Therefore, the only challenge is to find the disparity of each pixel.
 
-    \paragraph{For other camera settings}, e.g. non-parallel baselines, different camera parameters,
+    \paragraph{For other camera settings}, e.g. non-parallel image planes and epipolar lines, different camera parameters,
     the fundamental matrix is the key option that can be used to find the depth of points.
     A 3D point can be defined as the intersection of the rays that start from the centers of cameras and
     cross the corresponding 2D keypoints in each image plane. In practice, first, the fundamental and the essential
