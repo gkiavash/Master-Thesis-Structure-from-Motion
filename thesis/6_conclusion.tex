@@ -6,28 +6,26 @@
 
 % Document
 \begin{document}
-    We developed a pipeline for the localization of our moving vehicle using images or videos captured by
-    a vehicle-mounted camera. Our process involved capturing videos of the streets in the city of Padova, extracting
-    video frames, and applying the Structure from Motion algorithm. We used \cite{lindenberger2021pixsfm}
-    to refine our reconstruction. Furthermore, a few handcrafted methods are applied as preprocessing before
-    registration, like aligning on the z axis, filtering, and slicing. On the other hand, we already had an
-    extensive point cloud captured by an airplane from the whole city as aerial(source) point cloud. The template matching algorithm
-    localized the ground 3D points in local windows of the aerial point cloud. Our extended template matching
-    algorithm returned not only the coordinates but also the scale and rotation of the template ground point cloud.
-    Next, we scaled and transformed our main ground point cloud with these results into the aerial point cloud, and then,
-    we employed the Iterative Closest Point (ICP) algorithm for local point cloud registration.
-    And the results became much more accurate. As it is discussed before, it is unlikely to register directly
+    We developed a pipeline for the localization of a moving vehicle using images or videos captured by
+    a camera. Our process involved capturing videos of the streets in the city of Padova, extracting
+    video frames, and applying the Structure from Motion algorithm to generate point cloud of streets, called ground point cloud. We used \cite{lindenberger2021pixsfm}
+    to refine our reconstruction. Furthermore, a few handcrafted methods are applied to the ground point clouds as preprocessing, like aligning on the z-axis, filtering, and slicing. On the other hand, we already had an
+    extensive point cloud captured by an airplane from the whole city as an aerial (source) point cloud.
+    In order to simplify our problem, for each point cloud, a binary grid map is created,
+    where each pixel is set to 1 if at least one 3D point's x and y coordinates fall within that pixel coordinates.
+    By having 2D images of binary maps for both point clouds, a template matching algorithm is utilized to
+    localize the ground binary map in the aerial grid map. We extended the template matching
+    algorithm in order to return not only the coordinates but also the scale and rotation of the template image.
+    Next, we scaled and transformed our initial ground point cloud with these results into the aerial point cloud, and then, the Iterative Closest Point (ICP) algorithm is employed for local point cloud registration, getting even more accurate results. As it is discussed before, it is unlikely to register directly
     the ground point cloud in the aerial point cloud
     since the only common 3D points between these two are streets and ground points, and these points
-    are not so discriminative. However, our method simplified the problem and showed a reasonable performance
-    in local point cloud registration.
+    are not so discriminative. However, our method showed a reasonable performance in local point cloud registration.
 
     As it is observed in the template matching results, the bigger the window of the aerial point cloud is, the harder it is to localize.
     Therefore, we may think of another approach for global registration. In our experiments, it is noticed that by
-    looking at both point clouds from the top viewpoint, crossroads are differentiable. So, if we could detect them as
-    keypoints and provide a proper descriptor for each crossroad, it is possible to register by correspondence
+    looking at both point clouds from the top viewpoint, crossroads are differentiable. So, if we could detect them as keypoints and provide a proper descriptor for each crossroad, it is possible to register by correspondence
     the ground point cloud in wider windows of the aerial point cloud. Our deep learning approach showed it is
-    possible to filter the crossroads by generating the binary grid maps from the top viewpoint as input to our model.
+    possible to filter the crossroads by using the binary grid maps as the input to our model.
     However, we had to prepare a huge and comprehensive dataset of crossroads which needed longer time for this thesis.
 
     To conclude, nowadays, with the advancements in cameras and powerful computers, the computation of accurate and
