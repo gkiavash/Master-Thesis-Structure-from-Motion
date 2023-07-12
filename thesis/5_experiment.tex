@@ -579,7 +579,7 @@
     in the aerial point cloud is difficult, like in dataset 10. Moreover, localizing streets with simple
     geometry is unlikely. For instance, if the generated point cloud only represents a straight alley, its binary
     grid map would be a simple rectangle. Considering the template matching algorithm,
-    a rectangular as the template binary map could be matched with any streets, especially in small scales.
+    a rectangle as the template binary map could be matched with any streets, especially in small scales.
     We expect that the algorithm would be able to localize more accurately after passing a crossroads or when the street's direction changes.
 
     Next, by mapping the resulting 2D coordinates to the aerial point cloud's reference frame, and applying the scaling
@@ -710,7 +710,7 @@
     Hence, we explored the use of existing visual Simultaneous Localization and Mapping (vSLAM) methods to approximate
     the initial camera poses. The best solution we found that using COLMAP sparse reconstruction with low configuration
     parameters, such as lower image resolution and limiting the maximum number of keypoints and matches, just to obtain
-    camera poses. Then, COLMAP's sparse reconstruction is re-executing with the initial camera poses and high-quality configuration.
+    camera poses. Then, COLMAP's sparse reconstruction is re-executed with the initial camera poses and high-quality configuration.
     This trick reduced the execution time significantly such that a dataset of 300 frames was reconstructed in 10 minutes.
 
 

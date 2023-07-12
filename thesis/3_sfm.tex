@@ -40,7 +40,7 @@
         But, not all of them can be used.
 
         \item \textbf{Reconstruction Initialization:} If the pipeline is considered as an iterative or sequential process,
-        a starting point is essential. Choosing a good initial pair of images is, so important. At the end of
+        a starting point is essential. Choosing a good initial pair of images is so important. At the end of
         each iteration, the camera parameters and 3D structure are optimized. Without a good initial estimate,
         the optimization process usually doesn't converge and is stuck in local minima. A good initial pair usually is
         chosen from the images with the highest number of matches.
@@ -76,7 +76,7 @@
     The first step in SfM pipeline is feature matching which
     is one of the core tasks in many Computer Vision applications as they are used to identify the corresponding
     matches among the input images. Some of the challenges are deformation in different viewpoints, occlusion,
-    illumination changes, moving objects, etc. There have been a lot of research in this area:
+    illumination changes, moving objects, etc. Here is a summary of improvements specifically related to SfM algorithm:
 
     \paragraph{Multi-View Optimization of Local Feature Geometry} (~\cite{Dusmanu2020Multi}) refines the existing keypoints. It tracks each keypoint in all input images and creates a tentative
     matches graph with keypoints as nodes and matches as edges. Each keypoint is known by its surrounding pixels
@@ -86,8 +86,8 @@
     similarity value with keypoint is supposed to be selected, and the translation vector ($T_{u->v}$)
     moves the keypoint to the selected pixel. In the next stage, since each keypoint could be seen in multiple images,
     a single incorrect match or displacement can cause a cascade of errors in the results. Therefore, for each track of
-    matches, a non-linear equation for minimizing the dot similarity between patches among all patches for the same
-    keypoint is optimized. The idea of this paper is also used in \cite{lindenberger2021pixsfm} which will be
+    matches, a non-linear equation for minimizing the dot similarity between the patch and all patches for the same
+    keypoint in other images is optimized. The idea of this paper is also used in \cite{lindenberger2021pixsfm} which will be
     described in detail in the next chapter.
 
     \begin{figure}
@@ -126,19 +126,22 @@
     and \cite{detone2018superpoint} are supervised deep learning based feature extractors that not only have
     outperformed handcrafted methods in terms of accuracy but also, could solve many challenges in this area like
     point of view challenges and multi-scale problems. Supervised learning means that the model has been trained
-    based on the keypoints defined in the training dataset. Their problem is that they have less performance for features other
-    than in the training dataset. Some of these papers have provided modules to train the model on your own customized features dataset
+    based on the keypoints already defined in the training dataset manually. Their problem is that they have less performance for the kinds of features other
+    than in the training dataset. Therefore, for every application, a special dataset must be prepared and the model
+    must be trained, i.e. the lack of robustness from subject to another.
+    Some of these papers have provided modules to train the model on your own customized features dataset.
 
     \newpage
     \subsection{Researches in Bundle Adjustment}
     Bundle Adjustment algorithms optimize the camera parameters and the position of 3D points by minimizing the
-    geometric errors between the projected 3D points and the corresponding 2D image observations, iteratively. However, there
-    are some disadvantages to this technique. Bundle Adjustment requires solving a large system of
+    geometric errors between the projected 3D points and the corresponding 2D image observations.
+    For every new input image, the errors are accumulated, and so, it increases exponentially in the subsequent iterations.
+    There are some disadvantages in this technique. Bundle Adjustment requires solving a large system of
     non-linear equations, which can be computationally expensive, especially for large datasets. This can be a
-    significant drawback, especially in real-time usage. In the experiment chapter, it will be shown that this is the most time-consuming part in Structure from Motion pipeline.
-    Also, It is sensitive to the initial values. If the initial values are not accurate, the optimization may fail to converge.
-    The optimization problem can have many local minima which means a high probability to converge to incorrect results.
-    Also, the error may increase exponentially in the subsequent iterations. Here are some of the best papers focusing on these issues.
+    significant drawback when it comes to real-time usage. In the experiment chapter, it will be shown that this is the most time-consuming part in Structure from Motion pipeline.
+    Moreover, these non-linear equations have considerably a high number of local minima due to the noises in matches,
+    and they are sensitive to the initial values. If the initial values are not accurate, the optimization may fail to converge.
+    Here are some of the best papers focused on these issues.
 
     \paragraph{BA-Net: Dense Bundle Adjustment Network} (~\cite{tang2019banet}) implemented feature-metric
     bundle adjustment that minimizes feature-metric errors instead of geometric erros between feature pyramids
@@ -156,8 +159,9 @@
     $d_{j} . q_{j}$ upgrades the pixel $q_{j}$ to its 3D coordinate. The function $\pi$ projects the points to image space.
     Thus, the optimization parameter is $X =[T_{1}, T_{2} ... T_{N_{i}}, d_{1}, d_{2} ... d_{N_{j}}]$.
 
-    For the generation of dense reconstruction, the depth of all pixels in all images are required. However, the
-    computation of these values is super expensive. This paper, also, uses \cite{tateno2017cnnslam} and \cite{yang2018deep} approaches to deal with this
+    For the generation of dense reconstruction, the depth of all pixels in all images are required. However,
+    if all pixels are considered as independant variables, the
+    computation of their values is super expensive. This paper, also, uses \cite{tateno2017cnnslam} and \cite{yang2018deep} approaches to deal with this
     issue. A set of arbitrary basis depth maps is created.
     Then, the final depth map is generated as a linear combination of these basis depth maps ("B"):
     \[ D = ReLU(w^T * B) \]
