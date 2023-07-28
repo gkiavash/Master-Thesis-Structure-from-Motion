@@ -194,8 +194,6 @@ if __name__ == "__main__":
     res = r.register(corres=corres)
     r.draw_result_corres(r.source, r.target, res)
 
-    print("hi")
-
     # to visualize features
     t_ = r.target_fpfh
     s_ = r.source_fpfh
@@ -206,4 +204,3 @@ if __name__ == "__main__":
 
     plt.imshow(s_.data[:, :200], interpolation='nearest')
     plt.show()
-

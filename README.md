@@ -30,6 +30,11 @@ script pixsfm:
 
 `python3 Master-Thesis-Structure-from-Motion/scripts/pixsfm_existing_db.py  $DATASET_PATH t1 kkk kkk`
 
+# Experiment Codes
+In `experiment` directory, you can see several approaches for point cloud registration.
+However, the final template matching algorithm with rotation and scale can be found here:
+
+`/experiments/image_registration/thesis_ply_reg_r_s_2.ipynb`
 
 # GPMF-parser
 
@@ -49,13 +54,11 @@ Run job file:
 
 Check job status: `squeue`
 
-
 # Others
 
 In order to limit the resources for specific linux command:
 
 `systemd-run --scope -p MemoryLimit=4096M -p CPUQuota=60% make`
-
 
 # Calibration
 
@@ -64,8 +67,6 @@ In order to limit the resources for specific linux command:
 in  singularity 
 
 `/cv_ext/bin/cam_calib -f /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2/ -c /home/gkiavash/Downloads/sfm_projects/datasets/cakibration_2/out.yaml --bw 8 --bh 6 -q 0.4 -k -s 4 -u --opencv_format`
-
-
 
 # Steps to create a new singularity in ClusterDei:
 
@@ -76,3 +77,4 @@ in  singularity
    sudo scp pixsfm_raw_.sif ghamsariki@login.dei.unipd.it:/home/ghamsariki/Master-Thesis-Structure-from-Motion/sif_files/
    `
 4. Convert it to sandbox sif file by using sbatch file
+
